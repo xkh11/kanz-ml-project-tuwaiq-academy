@@ -1,0 +1,3 @@
+model,chosen,test,score,baseline
+Model 1 — Treasure Map,Random Forest (tuned),unseen ocean regions (30° blocks),R^2 0.82,effort only 0.68
+Model 2 — Bleaching risk,Random Forest (tuned),unseen reef sites,macro F1 0.70,heat rule 0.43
