@@ -3,7 +3,7 @@
    Two meaning colours only: lagoon turquoise = life and treasure, coral = heat and danger.
    Projector rules: dark ground (no washed-out beige), text at 17px or more, key numbers at 44px or more,
    high contrast, few words per screen. Signature: every place carries its coordinates in small mono.
-   Cleaned with the unslop rules (heydamir/unslop, CC BY 4.0): one ramp, 4px grid, weights 400-600,
+   Rules: one colour ramp, 4px grid, font weights 400-600,
    sentence case, no glows, no hue-to-hue gradients, one entrance on load. */
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
