@@ -1,0 +1,19 @@
+[server]
+enableStaticServing = true
+
+[theme]
+base = "dark"
+primaryColor = "#34D5C4"
+backgroundColor = "#04131D"
+secondaryBackgroundColor = "#0E2C3D"
+textColor = "#EEF6F6"
+font = "Instrument Sans:https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap"
+headingFont = "Newsreader:https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
+baseFontSize = 17
+baseRadius = "10px"
+borderColor = "#1E4153"
+showWidgetBorder = true
+
+[client]
+toolbarMode = "minimal"
