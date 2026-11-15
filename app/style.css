@@ -1,0 +1,310 @@
+/* Kanz design system — deep ocean, built for a projector
+   Direction: exact, alive, hopeful. World: the reef at night, seen from a research ship.
+   Two meaning colours only: lagoon turquoise = life and treasure, coral = heat and danger.
+   Projector rules: dark ground (no washed-out beige), text at 17px or more, key numbers at 44px or more,
+   high contrast, few words per screen. Signature: every place carries its coordinates in small mono.
+   Rules: one colour ramp, 4px grid, font weights 400-600,
+   sentence case, no glows, no hue-to-hue gradients, one entrance on load. */
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* deep-water ramp */
+  --bg: #04131D;
+  --bg-2: #071C29;
+  --card: #0B2535;
+  --raised: #113246;
+  --line: rgba(238, 246, 246, .10);
+  --line-2: rgba(238, 246, 246, .18);
+  --text: #EEF6F6;
+  --text-2: #B4C9CD;
+  --muted: #86A2A9;
+  /* meaning colours */
+  --life: #34D5C4;
+  --life-ink: #5FE6D7;
+  --life-soft: rgba(52, 213, 196, .14);
+  --heat: #FF6A4D;
+  --heat-ink: #FF8B73;
+  --heat-soft: rgba(255, 106, 77, .16);
+  /* type */
+  --serif: 'Newsreader', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* shape, motion */
+  --r-ctl: 10px;
+  --r-card: 16px;
+  --r-panel: 24px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ---------- base ---------- */
+.stApp { background: var(--bg); color: var(--text); }
+.stApp :is(p, li, label, input, textarea, button, div[data-testid="stMarkdownContainer"]) { font-family: var(--sans); }
+.stApp :is(h1, h2, h3) * { font-family: inherit !important; }
+.block-container { max-width: 1360px; padding: 16px 40px 80px; }
+#MainMenu, footer { visibility: hidden; }
+header[data-testid="stHeader"] { background: transparent; height: 0; }
+p, li { line-height: 1.6; }
+h1, h2, h3 { font-family: var(--serif) !important; font-weight: 400 !important; color: var(--text); }
+[data-testid="stHeaderActionElements"] { display: none !important; }
+.kz-snd { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.kz-snd.kz-big { font-size: 16px; color: var(--text); font-weight: 500; }
+
+/* ---------- brand row + tabs ---------- */
+.kz-brand { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 0 20px; }
+.kz-brand .mark { font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--text); }
+.kz-brand .mark span { color: var(--life); font-weight: 400; margin-left: 10px; }
+.kz-brand .meta { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.st-key-keys_box { position: absolute !important; height: 0 !important; overflow: hidden; margin: 0 !important; }
+
+.stTabs [role="tablist"] {
+  gap: 4px; background: var(--card); padding: 6px; border-radius: 14px; border: 1px solid var(--line) !important;
+  width: fit-content; margin: 0 0 40px 0;
+}
+.stTabs [data-testid="stTab"] {
+  height: 46px; padding: 0 22px; border-radius: var(--r-ctl); background: transparent; border: 0 !important;
+  color: var(--text-2); cursor: pointer; transition: background-color .15s var(--ease), color .15s var(--ease), transform .12s var(--ease);
+}
+.stTabs [data-testid="stTab"] p { font-size: 17px; font-weight: 500; }
+.stTabs [data-testid="stTab"]:hover { color: var(--text); background: var(--raised); }
+.stTabs [data-testid="stTab"]:active { transform: scale(.98); }
+.stTabs [data-testid="stTab"][aria-selected="true"] { background: var(--life) !important; }
+.stTabs [data-testid="stTab"][aria-selected="true"] p { color: #04131D !important; font-weight: 600; }
+.stTabs [data-testid="stTab"]::after, .stTabs [data-testid="stTab"]::before, .stTabs .react-aria-SelectionIndicator { display: none !important; }
+.stTabs [data-testid="stTab"]:focus-visible { outline: 2px solid var(--life); outline-offset: 2px; }
+
+/* ---------- hero: a scene with the product rising from its bottom edge ---------- */
+.kz-hero {
+  position: relative; border-radius: var(--r-panel); overflow: hidden; height: calc(100vh - 160px); min-height: 760px; max-height: 920px;
+  background: #062A50 url('app/static/hero_turtle.jpg') 62% center / cover no-repeat;
+}
+.kz-hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(2, 12, 20, .84) 0%, rgba(2, 12, 20, .5) 40%, rgba(2, 12, 20, 0) 66%),
+              linear-gradient(0deg, rgba(4, 19, 29, .9) 0%, rgba(4, 19, 29, 0) 30%);
+}
+.kz-hero .copy { position: relative; padding: 72px 72px 0; max-width: 780px; }
+.kz-hero .label { font-family: var(--mono); font-size: 14px; color: var(--life-ink); }
+.kz-hero h1 {
+  color: #FFFFFF !important; font-size: 84px !important; line-height: 1.02 !important; letter-spacing: -.03em; margin: 20px 0 24px !important; padding: 0 !important;
+}
+.kz-hero .sub { color: rgba(238, 246, 246, .88); font-size: 21px; line-height: 1.55; max-width: 36rem; margin: 0; }
+.kz-actions { display: flex; gap: 12px; margin-top: 36px; }
+.kz-btn {
+  display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 24px; border-radius: 12px; font-size: 17px; font-weight: 600;
+  text-decoration: none !important; transition: background-color .15s var(--ease), border-color .15s var(--ease), transform .12s var(--ease);
+}
+.kz-btn:active { transform: scale(.98); }
+.kz-btn.primary { background: var(--life); color: #04131D !important; }
+.kz-btn.primary:hover { background: var(--life-ink); }
+.kz-btn.ghost { color: #FFFFFF !important; border: 1px solid rgba(238, 246, 246, .4); font-weight: 500; }
+.kz-btn.ghost:hover { border-color: rgba(238, 246, 246, .75); background: rgba(238, 246, 246, .08); }
+.kz-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.kz-readout {
+  position: absolute; left: 40px; right: 40px; bottom: 0; background: var(--card); border: 1px solid var(--line); border-bottom: 0;
+  border-radius: 20px 20px 0 0; padding: 22px 32px 28px;
+}
+.kz-readout .top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.kz-readout .top .t { font-size: 17px; font-weight: 500; color: var(--text); }
+.kz-readout .top .t::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--life); margin-right: 10px; vertical-align: 2px; }
+.kz-readout .top .s { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.kz-readout .cells { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; padding-top: 18px; }
+.kz-readout .cell { padding: 0 28px; border-left: 1px solid var(--line); }
+.kz-readout .cell:first-child { padding-left: 0; border-left: 0; }
+.kz-readout .k { font-size: 15px; color: var(--text-2); }
+.kz-readout .v { font-size: 40px; font-weight: 500; line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: -.01em; }
+.kz-readout .v.heat { color: var(--heat); }
+.kz-readout .v small { font-size: 17px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+.kz-readout .n { margin-top: 6px; }
+
+.kz-in { animation: kz-in .5s var(--ease) both; }
+.kz-in.d1 { animation-delay: .05s; } .kz-in.d2 { animation-delay: .1s; } .kz-in.d3 { animation-delay: .15s; } .kz-in.d4 { animation-delay: .25s; }
+@keyframes kz-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ---------- section heads ---------- */
+.kz-head { margin: 112px 0 36px; max-width: 900px; }
+.kz-head.first { margin-top: 8px; }
+.kz-head .label { font-family: var(--mono); font-size: 14px; color: var(--life-ink); }
+.kz-head h2 { font-size: 54px !important; line-height: 1.08 !important; letter-spacing: -.02em; margin: 10px 0 14px !important; padding: 0 !important; }
+.kz-head p { color: var(--text-2); font-size: 19px; margin: 0; max-width: 44rem; line-height: 1.55; }
+.kz-sub { font-size: 16px; font-weight: 600; color: var(--text); margin: 4px 0 12px; }
+
+/* ---------- surfaces and big numbers ---------- */
+.kz-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); padding: 28px; }
+.kz-stat .k { font-size: 15px; color: var(--text-2); }
+.kz-stat .v { font-size: 44px; font-weight: 500; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.kz-stat .v.heat { color: var(--heat); }
+.kz-stat .v.life { color: var(--life); }
+.kz-stat .v small { font-size: 18px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+.kz-stat .c { font-size: 15px; color: var(--muted); margin-top: 6px; }
+.kz-grid { display: grid; gap: 16px; }
+.kz-g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kz-g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kz-huge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.kz-huge .kz-stat .v { font-size: 64px; }
+
+/* ---------- the chain (Kanz tab) ---------- */
+.kz-chain { border-top: 1px solid var(--line); }
+.kz-chain a {
+  display: grid; grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1.4fr) 140px; align-items: center; gap: 28px;
+  padding: 24px 16px; border-bottom: 1px solid var(--line); text-decoration: none !important; color: var(--text) !important;
+  transition: background-color .15s var(--ease);
+}
+.kz-chain a:hover { background: var(--card); }
+.kz-chain .i { font-family: var(--mono); font-size: 14px; color: var(--life-ink); }
+.kz-chain .q { font-family: var(--serif); font-size: 30px; letter-spacing: -.01em; }
+.kz-chain .a { color: var(--text-2); font-size: 17px; }
+.kz-chain .go { font-size: 16px; color: var(--life-ink); text-align: right; font-weight: 500; }
+.kz-chain .go span { display: inline-block; transition: transform .15s var(--ease); }
+.kz-chain a:hover .go span { transform: translateX(4px); }
+
+/* ---------- ranked rows ---------- */
+.kz-rows { border-top: 1px solid var(--line); }
+.kz-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 8px; border-bottom: 1px solid var(--line); }
+.kz-row .i { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.kz-row .name { font-size: 17px; font-weight: 500; color: var(--text); }
+.kz-row .meta { font-size: 14px; color: var(--text-2); margin-top: 2px; }
+.kz-row .val { font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
+.kz-row .val.accent { color: var(--life); }
+.kz-row .val.heat { color: var(--heat); }
+.kz-row.on { background: var(--card); box-shadow: inset 3px 0 0 var(--life); }
+
+/* thin-bar lists */
+.kz-bars .r { display: grid; grid-template-columns: 120px minmax(0, 1fr) 64px; gap: 16px; align-items: center; padding: 10px 0; }
+.kz-bars .lab { font-family: var(--mono); font-size: 14px; color: var(--text-2); }
+.kz-bars .track { height: 14px; background: var(--raised); border-radius: 7px; overflow: hidden; }
+.kz-bars .fill { height: 100%; background: #3C5D6B; border-radius: 7px; }
+.kz-bars .fill.accent { background: var(--life); }
+.kz-bars .fill.heat { background: var(--heat); }
+.kz-bars .num { font-size: 20px; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.kz-bars .cap { font-size: 15px; color: var(--muted); margin-top: 10px; }
+
+/* ---------- predictor ---------- */
+.kz-pred .big { font-size: 132px; font-weight: 500; line-height: .95; letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--heat); }
+.kz-pred .big.calm { color: var(--life); }
+.kz-pred .what { font-size: 19px; color: var(--text-2); margin-top: 12px; }
+.kz-share { display: flex; height: 18px; border-radius: 9px; overflow: hidden; margin-top: 28px; background: var(--raised); }
+.kz-share > div { height: 100%; }
+.kz-share .none { background: #2F6D7A; } .kz-share .mild { background: #C99A5B; } .kz-share .severe { background: var(--heat); }
+.kz-legend { display: flex; gap: 24px; margin-top: 14px; font-size: 16px; color: var(--text-2); }
+.kz-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: 1px; }
+
+/* ---------- photo frames ---------- */
+.kz-band {
+  position: relative; border-radius: var(--r-panel); overflow: hidden; height: 440px; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 48px; background-size: cover; background-position: center; margin-bottom: 8px;
+}
+.kz-band::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2, 12, 20, .86) 0%, rgba(2, 12, 20, .5) 45%, rgba(2, 12, 20, .05) 80%); }
+.kz-band > * { position: relative; max-width: 680px; }
+.kz-band .label { font-family: var(--mono); font-size: 14px; color: var(--life-ink); }
+.kz-band h2 { color: #FFFFFF !important; font-size: 60px !important; line-height: 1.04 !important; letter-spacing: -.02em; margin: 10px 0 14px !important; padding: 0 !important; }
+.kz-band p { color: rgba(238, 246, 246, .88); font-size: 19px; margin: 0; }
+.kz-photo { position: relative; border-radius: var(--r-card); overflow: hidden; min-height: 560px; height: 100%; background: var(--card); }
+.kz-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- tags (IUCN) ---------- */
+.kz-tag { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 14px; margin: 0 6px 8px 0; background: var(--raised); color: var(--text-2); }
+.kz-tag b { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--text); }
+.kz-tag.cr { background: var(--heat-soft); color: var(--heat-ink); }
+.kz-tag.cr b { color: var(--heat-ink); }
+.kz-tag i { font-style: italic; }
+
+/* species list under each IUCN card: scrolls inside the card */
+.kz-list {
+  margin-top: 12px; padding: 16px; max-height: 300px; overflow-y: auto;
+  display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start;
+  scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, #000 88%, transparent);
+}
+.kz-list::-webkit-scrollbar { width: 6px; }
+.kz-list::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
+.kz-list .kz-tag { margin: 0; }
+.kz-empty { color: var(--muted); font-size: 15px; }
+
+/* site rows (Dive) */
+.kz-site { padding: 18px 8px; border-bottom: 1px solid var(--line); }
+.kz-site .top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.kz-site .name { font-size: 18px; font-weight: 500; }
+.kz-site .score { font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--life); }
+.kz-site .meta { font-size: 14px; color: var(--text-2); margin: 2px 0 10px; }
+.kz-site .track { height: 6px; border-radius: 3px; background: var(--raised); overflow: hidden; margin-bottom: 10px; }
+.kz-site .track div { height: 100%; background: var(--life); }
+
+/* users (Dive) */
+.kz-users { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; }
+.kz-users > div { border-top: 2px solid var(--life); padding-top: 22px; }
+.kz-users h3 { font-size: 30px !important; margin: 0 0 10px !important; padding: 0 !important; letter-spacing: -.01em; }
+.kz-users p { color: var(--text-2); font-size: 17px; margin: 0; }
+.kz-users .k { font-family: var(--mono); font-size: 13px; color: var(--life-ink); margin-bottom: 12px; }
+
+.kz-foot { margin-top: 112px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+/* ---------- Streamlit widgets in the house style ---------- */
+div[data-testid="stPlotlyChart"] { background: var(--card); border-radius: var(--r-card); padding: 12px; border: 1px solid var(--line); }
+[data-testid="stExpander"] details { background: var(--card); border-radius: var(--r-card) !important; border: 1px solid var(--line) !important; }
+[data-testid="stExpander"] summary p { font-weight: 500; font-size: 17px; }
+.stButton > button {
+  min-height: 48px; border-radius: 12px !important; padding: 0 20px !important; font-weight: 500 !important; font-size: 16px !important;
+  background: var(--raised); border: 1px solid var(--line-2) !important; color: var(--text) !important;
+  transition: background-color .15s var(--ease), border-color .15s var(--ease), transform .12s var(--ease) !important;
+}
+.stButton > button:hover { background: #18405A; border-color: var(--life) !important; }
+.stButton > button:active { transform: scale(.98); }
+.stButton > button[kind="primary"] { background: var(--life); color: #04131D !important; border-color: var(--life) !important; font-weight: 600 !important; }
+.stButton > button[kind="primary"]:hover { background: var(--life-ink); }
+.stButton > button p { font-size: 16px !important; }
+.stButton > button[kind="primary"] p { color: #04131D !important; font-weight: 600 !important; }
+.st-key-next .stButton > button { min-height: 60px; padding: 0 28px !important; }
+.st-key-next .stButton > button p { font-size: 18px !important; }
+.st-key-next { margin-top: 72px; }
+[data-testid="stWidgetLabel"] p { font-size: 16px !important; color: var(--text-2) !important; font-weight: 500 !important; }
+[data-testid="stSliderThumbValue"], [data-testid="stSliderThumbValue"] p { font-family: var(--mono) !important; font-size: 15px !important; color: var(--life-ink) !important; }
+[data-testid="stSliderTickBarMin"], [data-testid="stSliderTickBarMax"] { font-family: var(--mono) !important; font-size: 13px !important; }
+/* pills and segmented controls: big, clear choices for the room */
+[data-testid="stButtonGroup"] button { min-height: 46px; padding: 0 18px !important; }
+[data-testid="stButtonGroup"] button p { font-size: 16px !important; }
+[data-testid="stSelectbox"] div[data-baseweb="select"] > div { min-height: 48px; font-size: 17px; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .kz-hero h1 { font-size: 60px !important; }
+  .kz-head h2 { font-size: 44px !important; }
+  .kz-readout .cells { grid-template-columns: 1fr 1fr; row-gap: 18px; }
+  .kz-readout .cell:nth-child(3) { padding-left: 0; border-left: 0; }
+  .kz-chain a { grid-template-columns: 44px minmax(0, 1fr) 120px; }
+  .kz-chain .a { display: none; }
+  .kz-pred .big { font-size: 100px; }
+}
+@media (max-width: 760px) {
+  .block-container { padding: 8px 16px 48px; }
+  .kz-brand .meta { display: none; }
+  .kz-hero { height: auto; min-height: 0; padding-bottom: 12px; background-position: 70% center; }
+  .kz-hero::before { background: linear-gradient(180deg, rgba(2, 12, 20, .86) 0%, rgba(2, 12, 20, .6) 55%, rgba(2, 12, 20, .4) 100%); }
+  .kz-hero .copy { padding: 48px 24px 32px; }
+  .kz-hero h1 { font-size: 42px !important; }
+  .kz-hero .sub { font-size: 17px; }
+  .kz-actions { flex-direction: column; }
+  .kz-btn { justify-content: center; }
+  .kz-readout { position: relative; left: 0; right: 0; margin: 0 12px; padding: 16px 16px 20px; border-radius: 16px; border-bottom: 1px solid var(--line); }
+  .kz-readout .top { flex-direction: column; gap: 4px; }
+  .kz-readout .v { font-size: 28px; }
+  .kz-head { margin-top: 72px; }
+  .kz-head h2 { font-size: 34px !important; }
+  .kz-head p { font-size: 17px; }
+  .kz-band { height: 320px; padding: 24px; }
+  .kz-band h2 { font-size: 34px !important; }
+  .kz-g2, .kz-g3, .kz-users, .kz-huge { grid-template-columns: 1fr; }
+  .kz-huge .kz-stat .v { font-size: 48px; }
+  .kz-photo { min-height: 300px; }
+  .kz-chain a { grid-template-columns: 32px minmax(0, 1fr) auto; gap: 12px; padding: 16px 4px; }
+  .kz-chain .q { font-size: 22px; }
+  .kz-chain .go { font-size: 14px; }
+  .kz-pred .big { font-size: 80px; }
+  .stTabs [role="tablist"] { width: 100%; overflow-x: auto; }
+}
+
+/* ---------- reduced motion: everything rests, nothing hidden ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

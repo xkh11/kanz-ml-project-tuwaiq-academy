@@ -1,0 +1,49 @@
+.dvw { position: relative; border-radius: 20px; overflow: hidden; font-family: 'Instrument Sans', system-ui, sans-serif; color: #FDFBF7; }
+.dv {
+  position: relative; height: 680px; overflow-y: auto; background: #3F8FAE;
+  scrollbar-width: thin; scrollbar-color: rgba(253, 251, 247, .3) transparent; overscroll-behavior: contain;
+}
+.dv .col {
+  position: relative;
+  /* light fading with depth: one water hue going dark */
+  background: linear-gradient(180deg, #3F8FAE 0%, #2A7695 6%, #185A78 20%, #0E3D57 40%, #08263A 62%, #04141F 82%, #020A10 100%);
+}
+.dvw .hud {
+  position: absolute; inset: 0 12px 0 0; z-index: 3; pointer-events: none; display: flex; justify-content: space-between;
+  align-items: flex-start; padding: 24px;
+}
+.dvw .go {
+  pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 20px; border: 0; border-radius: 12px;
+  background: #34D5C4; color: #04131D; font: 600 16px 'Instrument Sans', system-ui, sans-serif; cursor: pointer;
+  transition: background-color .15s cubic-bezier(.22, 1, .36, 1), transform .12s cubic-bezier(.22, 1, .36, 1);
+}
+.dvw .go:hover { background: #5FE6D7; }
+.dvw .go:active { transform: scale(.97); }
+.dvw .go svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.dvw .meter { text-align: right; max-width: 240px; }
+.dvw .meter .m { font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: rgba(253, 251, 247, .7); }
+.dvw .meter .num { font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 56px; font-weight: 500; letter-spacing: -.02em; color: #FDFBF7; font-variant-numeric: tabular-nums; }
+.dvw .meter .z { font-family: 'Newsreader', Georgia, serif; font-size: 22px; margin-top: 2px; }
+.dvw .meter .c { font-size: 13px; color: rgba(253, 251, 247, .72); margin-top: 8px; line-height: 1.5; }
+.dvw .meter .c b { color: #FDFBF7; font-weight: 500; font-variant-numeric: tabular-nums; }
+.dv .zone { position: absolute; left: 24px; right: 24px; border-top: 1px dashed rgba(253, 251, 247, .28); padding-top: 8px; display: flex; gap: 12px; align-items: baseline; }
+.dv .zone .d { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: rgba(253, 251, 247, .6); }
+.dv .zone .n { font-family: 'Newsreader', Georgia, serif; font-size: 20px; color: rgba(253, 251, 247, .9); }
+.dv .note { position: absolute; left: 24px; max-width: 320px; margin-top: 48px; font-size: 15px; line-height: 1.55; color: rgba(253, 251, 247, .86); }
+.dv .note b { color: #FDFBF7; font-weight: 500; }
+.dv .cr { position: absolute; width: 240px; margin: 0; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 12px 32px rgba(0, 0, 0, .35); }
+.dv .cr.l { left: 33%; }
+.dv .cr.r { left: 55%; }
+.dv .cr img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.dv .cr figcaption { position: absolute; left: 8px; bottom: 8px; display: flex; gap: 8px; align-items: baseline; padding: 4px 8px; border-radius: 6px; background: rgba(253, 251, 247, .94); color: #1F1B16; font-size: 12px; }
+.dv .cr figcaption b { font-weight: 500; }
+.dv .cr figcaption span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7B7266; }
+@media (max-width: 760px) {
+  .dv { height: 600px; }
+  .dvw .hud { padding: 16px; flex-direction: column; gap: 12px; }
+  .dvw .meter { text-align: left; }
+  .dvw .meter .num { font-size: 40px; }
+  .dv .cr { width: 160px; }
+  .dv .cr.l { left: auto; right: 16px; } .dv .cr.r { left: auto; right: 16px; }
+  .dv .note { max-width: 45%; }
+}
