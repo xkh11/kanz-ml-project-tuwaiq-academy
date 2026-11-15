@@ -191,6 +191,7 @@ h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
 .rcard .v { font-size: 150px; line-height: 1; color: var(--life); }
 .rcard .vs { font-size: 34px; color: var(--muted); }
 .rcard .vs .num { font-size: 56px; color: var(--text-2); }
+.rcard .vs .bl { display: block; font-size: 24px; color: var(--muted); margin-top: 6px; }
 .rcard .plain { margin-top: 28px; font-size: 34px; line-height: 1.5; color: var(--text); }
 .rbars { margin-top: 28px; display: grid; gap: 12px; }
 .rb { height: 20px; border-radius: 10px; background: rgba(238, 246, 246, .06); overflow: hidden; }
@@ -263,6 +264,33 @@ h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
 .qr .code svg { display: block; width: 100%; height: auto; }
 .qr b { display: block; margin-top: 18px; font-family: var(--serif); font-weight: 500; font-size: 36px; color: var(--life); }
 .qr span { display: block; margin-top: 6px; font-size: 22px; color: var(--text-2); line-height: 1.4; }
+
+/* ---------- 6 models: one panel per model ---------- */
+.s-models h2 { font-size: 72px; max-width: none; }
+.mcols { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.mpanel { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 32px 36px 28px; }
+.mh { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid var(--line); }
+.mh b { font-family: var(--serif); font-weight: 500; font-size: 46px; }
+.mh span { font-family: var(--mono); font-size: 22px; color: var(--muted); direction: ltr; }
+.mbars2 { display: grid; gap: 16px; }
+.mb2 { display: grid; grid-template-columns: 270px 1fr 76px; gap: 18px; align-items: center; font-size: 26px; color: var(--text-2); }
+.mb2 .lab { direction: ltr; text-align: right; white-space: nowrap; }
+.mb2.base .lab { direction: rtl; line-height: 1.15; }
+.mb2 .lab small { display: block; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+.mb2 .x { color: var(--heat-ink); margin-inline-start: 10px; }
+.mb2 .t { height: 26px; border-radius: 8px; background: rgba(238, 246, 246, .06); overflow: hidden; }
+.mb2 .t i { display: block; height: 100%; border-radius: 8px; background: #3C5D6B; transform-origin: right; transform: scaleX(0); transition: transform 1.3s var(--ease); }
+.slide.on .mb2 .t i { transform: scaleX(var(--w)); transition-delay: var(--d); }
+.mb2 b { font-size: 28px; font-weight: 500; text-align: left; color: var(--text); }
+.mb2.win { color: var(--text); }
+.mb2.win .t i { background: var(--life); }
+.mb2.win b { color: var(--life); }
+.mb2.fail { opacity: .55; }
+.mb2.base .t i { background: rgba(238, 246, 246, .22); }
+.mb2.base b { color: var(--muted); }
+.why2 { margin-top: 24px; font-size: 26px; line-height: 1.5; color: var(--text-2); }
+.why2 b { color: var(--life); font-weight: 500; direction: ltr; unicode-bidi: isolate; }
+.mfoot { margin-top: 28px; font-size: 26px; color: var(--muted); }
 
 /* ---------- 6b features (the 12 inputs of the bleaching model) ---------- */
 .s-features h2 { font-size: 76px; }
@@ -390,55 +418,36 @@ h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
     </div>
   </section>
 
-  <!-- 5b · features: the 12 inputs of the bleaching model, with how much each one weighs in its decisions -->
-  <section class="slide s-features" data-depth="320">
-    <div class="kicker" data-a style="--d:.1s">مدخلات نموذج الابيضاض</div>
-    <h2 data-a style="--d:.2s"><span class="num">12</span> عمود يعرفها النموذج عن كل شعاب</h2>
-    <div class="feats">
-      <div class="fgroup" data-a style="--d:.35s">
-        <div class="gh"><b>الحرارة والموسم</b><span class="share num">44%<small>من القرار</small></span></div>
-        <div class="feat"><div class="w">حرارة سطح البحر<code>Temperature_Kelvin</code></div><div class="t"><i style="--w:.53;--d:.6s"></i></div><span class="p num">8.0%</span></div>
-        <div class="feat"><div class="w">كم هي فوق أحرّ شهر معتاد<code>TSA</code></div><div class="t"><i style="--w:.53;--d:.65s"></i></div><span class="p num">8.0%</span></div>
-        <div class="feat"><div class="w">أسابيع الحرارة فوق أحرّ شهر<code>TSA_DHW</code></div><div class="t"><i style="--w:.51;--d:.7s"></i></div><span class="p num">7.7%</span></div>
-        <div class="feat"><div class="w">أسابيع الحرارة فوق المعدّل<code>SSTA_DHW</code></div><div class="t"><i style="--w:.51;--d:.75s"></i></div><span class="p num">7.7%</span></div>
-        <div class="feat"><div class="w">كم هي أعلى من المعتاد لهالوقت<code>SSTA</code></div><div class="t"><i style="--w:.48;--d:.8s"></i></div><span class="p num">7.2%</span></div>
-        <div class="feat"><div class="w">الشهر<code>Date_Month</code></div><div class="t"><i style="--w:.35;--d:.85s"></i></div><span class="p num">5.3%</span></div>
-      </div>
-      <div class="fgroup" data-a style="--d:.5s">
-        <div class="gh"><b>المكان</b><span class="share num">56%<small>من القرار</small></span></div>
-        <div class="feat"><div class="w">البعد عن الشاطئ<code>Distance_to_Shore</code></div><div class="t"><i style="--w:.88;--d:.75s"></i></div><span class="p num">13.2%</span></div>
-        <div class="feat"><div class="w">العمق<code>Depth_m</code></div><div class="t"><i style="--w:.76;--d:.8s"></i></div><span class="p num">11.4%</span></div>
-        <div class="feat"><div class="w">كم مرة تمرّ الأعاصير<code>Cyclone_Frequency</code></div><div class="t"><i style="--w:.66;--d:.85s"></i></div><span class="p num">9.9%</span></div>
-        <div class="feat"><div class="w">عكارة الماء<code>Turbidity</code></div><div class="t"><i style="--w:.59;--d:.9s"></i></div><span class="p num">8.9%</span></div>
-        <div class="feat"><div class="w">الحرارة المعتادة للمكان<code>ClimSST</code></div><div class="t"><i style="--w:.54;--d:.95s"></i></div><span class="p num">8.1%</span></div>
-        <div class="feat"><div class="w">سرعة الرياح<code>Windspeed</code></div><div class="t"><i style="--w:.31;--d:1s"></i></div><span class="p num">4.7%</span></div>
-      </div>
-    </div>
-    <p class="feats-note" data-a style="--d:1.1s">النسبة = أهمية العمود في قرار النموذج النهائي. المكان يقرر أكثر من الحرارة نفسها، وكل الأعمدة تنبني من بيانات NOAA اليومية</p>
-  </section>
-
+  
   <!-- 6 · models -->
   <section class="slide s-models" data-depth="450">
     <div class="kicker" data-a style="--d:.1s">النماذج</div>
-    <h2 data-a style="--d:.2s">جرّبنا خمسة نماذج، واخترنا الأقوى والأبسط</h2>
-    <div class="cols">
-      <div data-a style="--d:.35s">
-        <div class="mbars">
-          <div class="mb"><span class="lab">Voting</span><div class="t"><i style="--w:.684;--d:.5s"></i></div><b class="num">0.68</b></div>
-          <div class="mb win"><span class="lab">Random Forest</span><div class="t"><i style="--w:.682;--d:.6s"></i></div><b class="num">0.68</b></div>
-          <div class="mb"><span class="lab">Gradient Boosting</span><div class="t"><i style="--w:.677;--d:.7s"></i></div><b class="num">0.68</b></div>
-          <div class="mb"><span class="lab">KNN</span><div class="t"><i style="--w:.633;--d:.8s"></i></div><b class="num">0.63</b></div>
-          <div class="mb"><span class="lab">Logistic Regression</span><div class="t"><i style="--w:.485;--d:.9s"></i></div><b class="num">0.49</b></div>
-          <div class="mb base"><span class="lab">قاعدة الحرارة (baseline)</span><div class="t"><i style="--w:.425;--d:1s"></i></div><b class="num">0.43</b></div>
+    <h2 data-a style="--d:.2s">لكل سؤال جرّبنا كذا نموذج، واخترنا الأقوى والأبسط</h2>
+    <div class="mcols">
+      <div class="mpanel" data-a style="--d:.35s">
+        <div class="mh"><b>خريطة الكنز</b><span>Regression · R²</span></div>
+        <div class="mbars2">
+          <div class="mb2 win"><span class="lab">Random Forest</span><div class="t"><i style="--w:0.82;--d:0.50s"></i></div><b class="num">0.82</b></div>
+          <div class="mb2 fail"><span class="lab">Ridge<span class="x"></span></span><div class="t"><i style="--w:0.82;--d:0.58s"></i></div><b class="num">0.82</b></div>
+          <div class="mb2 "><span class="lab">Gradient Boosting</span><div class="t"><i style="--w:0.81;--d:0.66s"></i></div><b class="num">0.81</b></div>
+          <div class="mb2 base"><span class="lab">جهد البحث بس<small>baseline</small></span><div class="t"><i style="--w:0.68;--d:0.74s"></i></div><b class="num">0.68</b></div>
         </div>
-        <p class="chart-cap">macro F1 على مواقع شعاب ما شافها النموذج · نموذج الابيضاض</p>
+        <p class="why2"><b>Random Forest</b> لأن Ridge فشل في اختبار المنطق: يزيد الأنواع بلا نهاية</p>
       </div>
-      <div class="notes">
-        <div class="note" data-a style="--d:.7s"><b>الفائز: Random Forest</b>تقارب مع Voting، فاخترنا الأبسط. وبعد الضبط وصل <span class="num">0.70</span></div>
-        <div class="note" data-a style="--d:.85s"><b>اختبرناه اختبار عادل</b>على شعاب ومناطق عمره ما شافها، عشان ما يغشّ</div>
-        <div class="note" data-a style="--d:1s"><b><span class="num">12</span> عمود بدل <span class="num">38</span></b>أقوى على السنين الجاية، وتنبني من بيانات NOAA اليومية</div>
+      <div class="mpanel" data-a style="--d:.5s">
+        <div class="mh"><b>خطر الابيضاض</b><span>Classification · macro F1</span></div>
+        <div class="mbars2">
+          <div class="mb2 "><span class="lab">Voting</span><div class="t"><i style="--w:0.68;--d:0.50s"></i></div><b class="num">0.68</b></div>
+          <div class="mb2 win"><span class="lab">Random Forest</span><div class="t"><i style="--w:0.68;--d:0.58s"></i></div><b class="num">0.68</b></div>
+          <div class="mb2 "><span class="lab">Gradient Boosting</span><div class="t"><i style="--w:0.67;--d:0.66s"></i></div><b class="num">0.67</b></div>
+          <div class="mb2 "><span class="lab">KNN</span><div class="t"><i style="--w:0.63;--d:0.74s"></i></div><b class="num">0.63</b></div>
+          <div class="mb2 "><span class="lab">Logistic Regression</span><div class="t"><i style="--w:0.49;--d:0.82s"></i></div><b class="num">0.49</b></div>
+          <div class="mb2 base"><span class="lab">قاعدة الحرارة<small>baseline</small></span><div class="t"><i style="--w:0.43;--d:0.90s"></i></div><b class="num">0.43</b></div>
+        </div>
+        <p class="why2"><b>Random Forest</b> لأنه بنفس قوة Voting وأبسط منه</p>
       </div>
     </div>
+    <p class="mfoot" data-a style="--d:1s">كل الدرجات على أماكن عمر النموذج ما شافها · قبل الضبط (tuning)</p>
   </section>
 
   <!-- 7 · results -->
@@ -448,19 +457,19 @@ h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
     <div class="res">
       <div class="rcard" data-a style="--d:.4s">
         <div class="k">خريطة الكنز · R² · Random Forest</div>
-        <div class="row"><span class="v num"><span class="count" data-to="0.82" data-dec="2">0</span></span><span class="vs">مقابل <span class="num">0.68</span></span></div>
+        <div class="row"><span class="v num"><span class="count" data-to="0.82" data-dec="2">0</span></span><span class="vs">مقابل <span class="num">0.68</span><small class="bl">baseline · جهد البحث بس</small></span></div>
         <div class="rbars"><div class="rb"><i style="--w:.82;background:var(--life);--d:.7s"></i></div><div class="rb"><i style="--w:.68;background:#3C5D6B;--d:.85s"></i></div></div>
         <p class="plain">يفسّر <span class="num">82%</span> من الفرق في عدد الكائنات بين المناطق</p>
       </div>
       <div class="rcard" data-a style="--d:.55s">
         <div class="k">خطر الابيضاض · macro F1 · Random Forest</div>
-        <div class="row"><span class="v num"><span class="count" data-to="0.70" data-dec="2">0</span></span><span class="vs">مقابل <span class="num">0.43</span></span></div>
+        <div class="row"><span class="v num"><span class="count" data-to="0.70" data-dec="2">0</span></span><span class="vs">مقابل <span class="num">0.43</span><small class="bl">baseline · قاعدة الحرارة</small></span></div>
         <div class="rbars"><div class="rb"><i style="--w:.70;background:var(--life);--d:.85s"></i></div><div class="rb"><i style="--w:.43;background:#3C5D6B;--d:1s"></i></div></div>
         <p class="plain">يلتقط <span class="num">7</span> من كل <span class="num">10</span> حالات ابيضاض شديد</p>
       </div>
     </div>
     <div class="hope-row">
-      <div class="jazan" data-a style="--d:.9s"><span class="num">#4</span><span><b>جازان اليوم الرابعة عالمياً</b> في الكنز المهدد، والأولى في السعودية</span></div>
+      <div class="jazan" data-a style="--d:.9s"><span class="num">#4</span><span><b>جازان الرابعة عالمياً</b> في الكنز المهدد يوم <span class="num">10</span> نوفمبر، والأولى في السعودية</span></div>
       <div class="jazan refuge" data-a style="--d:1.05s"><span class="num">2%</span><span><b>بس من شعاب البحر الأحمر</b> ابيضّت بشدة تحت الحرارة القوية، مقابل <span class="num">56%</span> بباقي العالم</span></div>
     </div>
   </section>
@@ -496,9 +505,9 @@ h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
     <div>
       <div class="kicker" data-a style="--d:.1s">العرض الحي</div>
       <h2 data-a style="--d:.2s">خلونا نشوفه شغّال</h2>
-      <p class="lead" data-a style="--d:.35s">كل عمود منطقة شعاب حقيقية. <b>الأحمر حرارة اليوم</b>، من بيانات NOAA</p>
+            <p class="lead" data-a style="--d:.35s">كل عمود منطقة شعاب حقيقية. <b>الأحمر حرارة <span class="num">10</span> نوفمبر</b>، من بيانات NOAA</p>
       <div class="demo-stats" data-a style="--d:.5s">
-        <div><div class="v num heat"><span class="count" data-to="72">0</span></div><div class="k">منطقة على إنذار ابيضاض اليوم</div></div>
+        <div><div class="v num heat"><span class="count" data-to="72">0</span></div><div class="k">منطقة على إنذار ابيضاض </div></div>
         <div><div class="v num">214</div><div class="k">منطقة شعاب نتابعها</div></div>
       </div>
       <a class="link" data-a style="--d:.65s" href="https://kanz-ml.streamlit.app/" target="_blank" rel="noopener">kanz-ml.streamlit.app</a>
