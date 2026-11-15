@@ -8,7 +8,7 @@ Machine Learning final project, Tuwaiq Academy.
 |---|---|
 | **Live app** | [kanz-ml.streamlit.app](https://kanz-ml.streamlit.app/) |
 | **Presentation (Arabic)** | [xkh11.github.io/kanz-ml-project-tuwaiq-academy](https://xkh11.github.io/kanz-ml-project-tuwaiq-academy/) |
-| **Full project notebook** | [notebooks/Kanz.ipynb](notebooks/Kanz.ipynb) |
+
 
 ---
 
