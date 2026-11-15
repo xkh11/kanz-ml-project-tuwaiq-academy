@@ -4,11 +4,13 @@ Project documents for Kanz | كنز.
 
 | File | What it is |
 |---|---|
-| `presentation/index.html` | The final presentation in Arabic (12 slides): problem, solution, results, then the live demo |
+| `index.html` | The final presentation in Arabic (12 slides): problem, solution, results, then the live demo |
 
 ## Open the presentation
 
-Double-click `presentation/index.html`. It opens in your browser and works offline, except the researchers' photo on slide 10, which loads from NOAA.
+Online: **https://xkh11.github.io/kanz-ml-project-tuwaiq-academy/** (GitHub Pages, served from this `docs` folder).
+
+Offline: double-click `index.html`. It opens in your browser and works offline, except the researchers' photo on slide 10, which loads from NOAA.
 
 * **Next slide:** right arrow, Space or Enter. **Previous:** left arrow. **Full screen:** F.
 * **Slide 2:** the first press reveals the answer, the second moves on.
@@ -24,7 +26,7 @@ The slides use the **Thmanyah** font (Thmanyah Sans and Thmanyah Serif Display).
 
 ## Editing
 
-All the text is in `presentation/index.html`, one `<section class="slide">` per slide, in order. Change the Arabic text between the tags and keep the tags as they are.
+All the text is in `index.html`, one `<section class="slide">` per slide, in order. Change the Arabic text between the tags and keep the tags as they are.
 
-* `presentation/img/`: the photos (credits in the main README).
-* `presentation/vendor/`: the 3D globe library and the data it draws (`reefs.js` today's reef heat, `heatyear.js` a year of weekly heat, `land.js` the world map).
+* `img/`: the photos (credits in the main README).
+* `vendor/`: the 3D globe library and the data it draws (`reefs.js` today's reef heat, `heatyear.js` a year of weekly heat, `land.js` the world map).
