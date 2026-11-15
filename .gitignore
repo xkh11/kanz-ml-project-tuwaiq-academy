@@ -6,3 +6,8 @@ venv/
 .env
 .DS_Store
 Thumbs.db
+
+# Thmanyah font: its licence forbids uploading the font files
+fonts-local-only.css
+*.otf
+*.woff2
