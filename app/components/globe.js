@@ -41,7 +41,7 @@ function tip(title, rows, lat, lon) {
 
 function riskLayer(g, d, state) {
   const pts = d.points;
-  g.pointsData(pts).pointLat("lat").pointLng("lon")
+  g.pointsData(pts).pointLat("lat").pointLng("lon").pointResolution(24)
     .pointAltitude((p) => 0.01 + (p.v / 100) * 0.32)
     .pointRadius((p) => (p.name === d.focus ? 0.75 : 0.42))
     .pointColor((p) => (p.name === d.focus ? "#34D5C4" : mix(HEAT, p.dhw / 16)))
@@ -67,10 +67,11 @@ function riskLayer(g, d, state) {
 
 function treasureLayer(g, d) {
   const top = Math.max(...d.points.map((p) => p.h)) || 1;
-  g.pointsData(d.points).pointLat("lat").pointLng("lon").pointsMerge(false)
+  // ~1,700 columns: merged into one mesh so the globe turns smoothly (one draw call instead of 1,700).
+  // Merged columns can't show a tooltip each; the list next to the globe gives the details.
+  g.pointsData(d.points).pointLat("lat").pointLng("lon").pointsMerge(true).pointResolution(16).pointsTransitionDuration(0)
     .pointAltitude((p) => 0.003 + Math.pow(p.h / top, 1.8) * 0.3).pointRadius(1.15)
-    .pointColor((p) => mix(WATER, Math.sqrt(p.h / top)))
-    .pointLabel((p) => tip(`+${fmt(p.h)} hidden species`, [["Recorded", fmt(p.r)], ["Expected", fmt(p.e)], ["Sea temperature", p.t == null ? "no data" : p.t.toFixed(0) + " °C"]], p.lat, p.lon));
+    .pointColor((p) => mix(WATER, Math.sqrt(p.h / top)));
 }
 
 function timeLayer(g, d, state, root) {
@@ -137,15 +138,26 @@ export default function (component) {
   state = root.__kz = { mode: data.mode, cleanups: [], setTriggerValue, focus: undefined };
   Promise.all([loadLib(), loadLand()]).then(([Globe, land]) => {
     if (!root.isConnected) return;
-    const g = Globe({ animateIn: !REDUCED })(root)
+    // smooth edges: antialiasing on, sharp on high-res screens but capped at 2x so 4K screens don't slow down
+    const g = Globe({ animateIn: !REDUCED, rendererConfig: { antialias: true, alpha: true, powerPreference: "high-performance" } })(root)
       .width(root.clientWidth).height(data.height || 560)
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true).atmosphereColor("#34D5C4").atmosphereAltitude(0.14)
-      .polygonsData(land.features).polygonAltitude(0.005)
-      .polygonCapColor(() => "#D8CBAF").polygonSideColor(() => "rgba(0,0,0,0)").polygonStrokeColor(() => "rgba(31,27,22,.18)")
+      .globeCurvatureResolution(2)
+      // land: no outline strokes (halves the shapes to draw), finer curvature so coasts sit smoothly on the sphere
+      .polygonsData(land.features).polygonAltitude(0.004).polygonCapCurvatureResolution(3)
+      .polygonCapColor(() => "#D8CBAF").polygonSideColor(() => "rgba(0,0,0,0)").polygonStrokeColor(() => false)
       .polygonsTransitionDuration(0);
+    g.renderer().setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // land sides are see-through anyway: skip drawing them (about 3x fewer draw calls for the land)
+    const hidden = new (g.globeMaterial().constructor)({ visible: false });
+    g.polygonSideMaterial(() => hidden);
     g.globeMaterial().color.set("#0B3A52");
     g.globeMaterial().shininess = 4;
+    const c0 = g.controls();
+    c0.enableDamping = true;           // the globe glides to a stop after a drag instead of stopping dead
+    c0.dampingFactor = 0.08;
+    c0.rotateSpeed = 0.6;
     const c = g.controls();
     c.enableZoom = false;              // never steal the page scroll
     c.autoRotate = !REDUCED;
