@@ -1,5 +1,4 @@
 // Kanz descent: a window you dive through, from the reef to 6,400 m.
-// It never catches the mouse wheel (the page keeps scrolling normally): the Dive button or the depth slider moves it.
 // The depth meter reads the scroll; the count is real (NOAA coral and sponge taxa recorded deeper than you are).
 const STOPS = [0, 200, 1000, 4000, 6400];          // depth (m)
 const AT = [0, 0.22, 0.42, 0.70, 1.0];             // share of the column height
@@ -28,8 +27,7 @@ export default function (component) {
   outer.innerHTML = `
     <div class="dv"><div class="col" style="height:${H}px"></div></div>
     <div class="hud">
-      <div class="ctl"><button class="go"><svg viewBox="0 0 24 24"><path d="M12 4v16M6 14l6 6 6-6"/></svg><span>Dive to 6,000 m</span></button>
-        <input class="scrub" type="range" min="0" max="1000" step="1" value="0" aria-label="Depth"></div>
+      <button class="go"><svg viewBox="0 0 24 24"><path d="M12 4v16M6 14l6 6 6-6"/></svg><span>Dive to 6,000 m</span></button>
       <div class="meter"><div class="m"><span class="num">0</span> m</div><div class="z">Sunlight zone</div>
         <div class="c"><b class="cnt">${fmt(depths.length)}</b> coral and sponge taxa recorded deeper than you</div></div>
     </div>`;
@@ -60,14 +58,13 @@ export default function (component) {
     col.appendChild(el);
   });
 
-  const num = outer.querySelector(".num"), zone = outer.querySelector(".z"), cnt = outer.querySelector(".cnt"), scrub = outer.querySelector(".scrub");
+  const num = outer.querySelector(".num"), zone = outer.querySelector(".z"), cnt = outer.querySelector(".cnt");
   const update = () => {
     const max = wrap.scrollHeight - wrap.clientHeight;
     const m = toM(max > 0 ? Math.min(1, Math.max(0, wrap.scrollTop / max)) : 0);
     num.textContent = fmt(m);
     zone.textContent = [...ZONES].reverse().find(([d]) => m >= d)[1];
     cnt.textContent = fmt(deeper(m));
-    if (document.activeElement !== scrub) scrub.value = max > 0 ? Math.round(wrap.scrollTop / max * 1000) : 0;
   };
   wrap.addEventListener("scroll", update, { passive: true });
   update();
@@ -90,10 +87,6 @@ export default function (component) {
     };
     raf = requestAnimationFrame(step);
   };
-  scrub.addEventListener("input", () => {
-    stop();
-    wrap.scrollTop = (+scrub.value / 1000) * (wrap.scrollHeight - wrap.clientHeight);
-    update();
-  });
+  ["wheel", "touchstart"].forEach((e) => wrap.addEventListener(e, () => raf && stop(), { passive: true }));
   return () => stop();
 }

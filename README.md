@@ -8,7 +8,7 @@ Machine Learning final project, Tuwaiq Academy.
 |---|---|
 | **Live app** | [kanz-ml.streamlit.app](https://kanz-ml.streamlit.app/) |
 | **Presentation (Arabic)** | [xkh11.github.io/kanz-ml-project-tuwaiq-academy](https://xkh11.github.io/kanz-ml-project-tuwaiq-academy/) |
-
+| **Full project notebook** | [notebooks/Kanz.ipynb](notebooks/Kanz.ipynb) |
 
 ---
 
@@ -43,7 +43,7 @@ Both models were tested on places they never saw during training.
 
 | Tab | What you can do |
 |---|---|
-| **Treasure** | Spin a 3D globe, hover any patch of ocean, and dive down to 6,000 m |
+| **Treasure** | Spin a 3D globe of unrecorded sea life and dive down to 6,000 m |
 | **Risk** | Pick a reef, make the sea warmer, and watch the model's answer change |
 | **Act** | Find the healthiest reefs to dive and the endangered animals near them |
 

@@ -87,21 +87,6 @@ def load_bleaching_model():
     return joblib.load(ROOT / "models" / "model2_bleaching_risk.joblib")
 
 
-# what the bleaching model relies on, grouped into plain words (Random Forest feature importances, summed per group)
-DRIVERS = {"Sea heat": ["Temperature_Kelvin", "SSTA", "TSA", "SSTA_DHW", "TSA_DHW"],
-           "Where the reef is": ["Distance_to_Shore", "Depth_m"],
-           "Storms and wind": ["Cyclone_Frequency", "Windspeed"],
-           "Usual temperature": ["ClimSST", "Date_Month"],
-           "Water clarity": ["Turbidity"]}
-
-
-@st.cache_resource(show_spinner=False)
-def model_drivers():
-    model = load_bleaching_model()
-    imp = dict(zip(model.feature_names_in_, model[-1].feature_importances_))
-    return sorted(((name, sum(imp[c] for c in cols) * 100) for name, cols in DRIVERS.items()), key=lambda x: -x[1])
-
-
 # ---------------------------------------------------------------- small helpers
 def html(text):
     st.markdown(text, unsafe_allow_html=True)
@@ -230,15 +215,10 @@ with tab_treasure:
     Most sea life is still unrecorded. Here is where it hides.</p>
   </div>
 </section>""")
-        html('<div class="kz-steps">'
-             '<a href="?tab=Treasure" target="_self"><span class="n">1</span><div><b>Treasure</b><span>Where sea life nobody has recorded is hiding</span></div></a>'
-             '<a href="?tab=Risk" target="_self"><span class="n">2</span><div><b>Risk</b><span>Which reefs heat will turn white, and where we lose life first</span></div></a>'
-             '<a href="?tab=Act" target="_self"><span class="n">3</span><div><b>Act</b><span>The healthiest reefs to dive, and the rare animals living there</span></div></a>'
-             '</div>')
 
         head("Treasure map", "Where is the treasure?",
              "Each column is a patch of ocean. The taller and brighter it is, the more sea life probably lives there "
-             "that nobody has recorded yet. Hover a column to see its numbers")
+             "that nobody has recorded yet")
         cells = treasure.assign(lat=treasure["cell_lat"] + 2.5, lon=treasure["cell_lon"] + 2.5,
                                 hidden=treasure["hidden_species"].clip(lower=0))
         col_map, col_list = st.columns([3, 2], gap="large")
@@ -247,9 +227,6 @@ with tab_treasure:
                     "e": round(float(r.expected_species)), "t": None if pd.isna(r.sst_mean) else round(float(r.sst_mean), 1)}
                    for r in cells.itertuples() if r.hidden > 0]
             globe("treasure", key="globe_treasure", height=560, points=pts, view={"lat": 5, "lon": 100, "alt": 2.6})
-            html('<div class="kz-proof"><b>How we know:</b> a Random Forest model learned how much life each patch of ocean holds '
-                 'from its depth, its temperature and how much scientists have searched it. On ocean regions it had never seen, '
-                 'it explained 82% of the differences between places, against 68% for a simple guess based on search effort alone (R² 0.82)</div>')
         with col_list:
             sub("Most life not yet recorded")
             top_cells = cells.sort_values("hidden", ascending=False).head(5)
@@ -276,7 +253,7 @@ with tab_treasure:
         chart(fig, 300)
 
         head("The deep", "Dive from the reef to 6,000 metres",
-             "Press dive, or drag the slider. The counter shows how many kinds of coral and sponge have been found deeper than you. "
+             "Press dive. The counter shows how many kinds of coral and sponge have been found deeper than you. "
              "Almost everything below the reef is still barely explored")
         corals = facts["corals"]
         photo = corals.dropna(subset=["ImageURL"]).drop_duplicates("ScientificName").set_index("ScientificName")
@@ -315,9 +292,6 @@ def predictor():
         warmer = presets[choice or "Now"]
         st.caption(f"Sea temperature {row['sst'] + warmer:.1f} °C · heat build-up {dhw + 4 * warmer:.1f} "
                    "(4+ bleaching likely, 8+ severe)")
-        html('<div class="kz-card kz-model"><div class="t">How the model decides</div>'
-             '<div class="s">How much it relies on each kind of information</div>'
-             + bars([(n, v, "heat" if n == "Sea heat" else "") for n, v in model_drivers()], 45) + "</div>")
 
     def features(heat_levels):
         # NOAA values for the place + its site conditions (same 12 columns as training);
@@ -341,8 +315,6 @@ def predictor():
     <div class="severe" style="width:{severe:.1f}%"></div></div>
   <div class="kz-legend"><span><i style="background:#2F6D7A"></i>No bleaching {none:.0f}%</span><span><i style="background:#C99A5B"></i>Mild {mild:.0f}%</span>
     <span><i style="background:var(--heat)"></i>Severe {severe:.0f}%</span></div>
-  <div class="kz-proof"><b>How we know:</b> a Random Forest model trained on 23,000 real reef surveys. Tested on reefs it had never seen,
-  it caught 7 in 10 cases of severe bleaching and scored 0.70, against 0.43 for the usual heat-only rule (macro F1)</div>
 </div>""")
         fig = go.Figure()
         fig.add_vrect(x0=8, x1=28, fillcolor="rgba(255,106,77,.07)", line_width=0)
@@ -381,7 +353,7 @@ with tab_risk:
 
         head("Treasure at risk", "Where will we lose the treasure first?",
              "Places with lots of unrecorded life and a high chance of bleaching badly today. Red means more heat, "
-             "taller means more life at risk. Hover a column for its numbers")
+             "taller means more life at risk. Point at a column for its numbers")
         col_map, col_list = st.columns([3, 2], gap="large")
         with col_map:
             globe("risk", key="globe_risk", height=560, rings=list(top_risk["station"].head(8)), focus=JAZAN, showFocus=True,
@@ -424,7 +396,8 @@ with tab_risk:
 with tab_act:
     if tab_act.open:
         band("reef_sharks", "Reef health score · 2,648 dive sites", "Dive where reefs thrive, rest the ones that overheat",
-             "Each site gets a score out of 100 from its fish, its coral, how clear the water is, and how likely it is to bleach")
+             "Each site gets a score out of 100 from its fish, its coral, how clear the water is, and how likely it is to bleach. "
+             "Click a site to see who lives near it")
 
         f1, f2 = st.columns([2, 1], vertical_alignment="bottom")
         countries = f1.multiselect("Countries", sorted(dive["country"].dropna().unique()), placeholder="All countries", key="countries")
@@ -451,7 +424,7 @@ with tab_act:
             sub("Healthiest reefs")
             html('<div class="kz-rows">' + "".join(
                 f'<div class="kz-site"><div class="top"><div class="name">{r.site_name}</div><div class="score">{r.health_index:.0f}</div></div>'
-                f'<div class="meta">{r.country} · {r.fish_species:.0f} kinds of fish · score out of 100</div>'
+                f'<div class="meta">{r.country} · {r.fish_species:.0f} kinds of fish</div>'
                 f'<div class="track"><div style="width:{r.health_index:.0f}%"></div></div></div>'
                 for r in sites.head(5).itertuples()) + "</div>")
 
@@ -471,16 +444,14 @@ with tab_act:
                 if clicked_site and clicked_site not in labels:
                     st.caption("That site wasn't checked for threatened species, so here is one that was")
             near = threatened[threatened["site_code"] == code]
-            # three counts in a row, then every species in one card, grouped (no scrolling inside small boxes)
-            groups = [("CR", "Critically endangered", "One step from extinction in the wild", "heat"),
-                      ("EN", "Endangered", "Very high risk of extinction", ""),
-                      ("VU", "Vulnerable", "High risk of extinction", "")]
-            found = {cat: sorted(near.loc[near["category"] == cat, "species"].dropna().tolist()) for cat, *_ in groups}
-            with col_counts:
-                html('<div class="kz-grid kz-g3">' + "".join(stat(title, len(found[cat]), note, tone=tone)
-                                                             for cat, title, note, tone in groups) + "</div>")
-            html('<div class="kz-card kz-species">' + "".join(
-                f'<div class="grp"><div class="gt">{title}<b>{len(found[cat])}</b></div>'
-                + ("".join(f'<span class="kz-tag {cat.lower()}"><i>{n}</i></span>' for n in found[cat])
-                   or '<div class="kz-empty">None recorded near this site</div>') + "</div>"
-                for cat, title, note, tone in groups) + "</div>")
+            # one column per IUCN category: the count, then every species in it
+            groups = [("CR", "Critically endangered", "heat"), ("EN", "Endangered", ""), ("VU", "Vulnerable", "")]
+            cols = st.columns(3, gap="medium")
+            for col, (cat, title, tone) in zip(cols, groups):
+                names = sorted(near.loc[near["category"] == cat, "species"].dropna().tolist())
+                tags = ("".join(f'<span class="kz-tag {cat.lower()}"><i>{s}</i></span>' for s in names)
+                        or '<div class="kz-empty">None recorded near this site</div>')
+                with col:
+                    html(stat(title, len(names), {"CR": "One step from extinction", "EN": "Very high risk of extinction",
+                                                  "VU": "High risk of extinction"}[cat], tone=tone)
+                         + f'<div class="kz-card kz-list">{tags}</div>')

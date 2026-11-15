@@ -209,11 +209,17 @@ h1, h2, h3 { font-family: var(--serif) !important; font-weight: 400 !important; 
 .kz-tag.cr b { color: var(--heat-ink); }
 .kz-tag i { font-style: italic; }
 
-/* endangered animals near a dive site: one card, grouped, no inner scrolling */
-.kz-species { margin-top: 16px; padding: 24px 28px; }
-.kz-species .grp + .grp { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
-.kz-species .gt { font-size: 15px; color: var(--text-2); margin-bottom: 10px; }
-.kz-species .gt b { font-weight: 600; color: var(--text); margin-left: 6px; }
+/* species list under each IUCN card: scrolls inside the card */
+.kz-list {
+  margin-top: 12px; padding: 16px; max-height: 300px; overflow-y: auto;
+  display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start;
+  scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, #000 88%, transparent);
+}
+.kz-list::-webkit-scrollbar { width: 6px; }
+.kz-list::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
+.kz-list .kz-tag { margin: 0; }
 .kz-empty { color: var(--muted); font-size: 15px; }
 
 /* site rows (Dive) */
@@ -302,23 +308,3 @@ div[data-testid="stPlotlyChart"] { background: var(--card); border-radius: var(-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
-/* first-visit guide under the hero */
-.kz-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
-.kz-steps a { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; padding: 20px 22px; border-radius: var(--r-card);
-  background: var(--card); border: 1px solid var(--line); text-decoration: none !important; color: var(--text) !important;
-  transition: border-color .15s var(--ease), background-color .15s var(--ease); }
-.kz-steps a:hover { border-color: var(--life); background: var(--raised); }
-.kz-steps .n { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--life);
-  color: var(--life); font-family: var(--mono); font-size: 15px; }
-.kz-steps b { display: block; font-size: 18px; font-weight: 600; }
-.kz-steps span { display: block; font-size: 15px; color: var(--text-2); margin-top: 2px; }
-/* how the model decides */
-.kz-model { margin-top: 20px; padding: 22px 24px; }
-.kz-model .t { font-size: 16px; font-weight: 600; color: var(--text); }
-.kz-model .s { font-size: 14px; color: var(--muted); margin-top: 2px; }
-.kz-model .kz-bars .r { grid-template-columns: 150px minmax(0, 1fr) 48px; padding: 7px 0; }
-.kz-model .kz-bars .lab { font-family: var(--sans); font-size: 14px; }
-.kz-model .kz-bars .num { font-size: 15px; }
-.kz-proof { font-size: 14px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
-.kz-proof b { color: var(--text-2); font-weight: 500; }
-@media (max-width: 760px) { .kz-steps { grid-template-columns: 1fr; } }

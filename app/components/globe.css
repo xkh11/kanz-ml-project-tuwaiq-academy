@@ -51,5 +51,3 @@
 /* globe.gl puts its tooltip styles in the page head, which this component's shadow root can't see.
    Without them the tooltip lost its position and jumped to the top-left corner on hover. */
 .float-tooltip-kap { position: absolute; width: max-content; max-width: 320px; pointer-events: none; z-index: 20; padding: 0; background: none; }
-/* our own hover card for the treasure globe (its columns are merged, so they have no tooltips of their own) */
-.kg-hover { position: absolute; left: 0; top: 0; z-index: 20; pointer-events: none; opacity: 0; transition: opacity .12s ease; will-change: transform; }

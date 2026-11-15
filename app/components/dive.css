@@ -1,6 +1,7 @@
 .dvw { position: relative; border-radius: 20px; overflow: hidden; font-family: 'Instrument Sans', system-ui, sans-serif; color: #FDFBF7; }
 .dv {
-  position: relative; height: 680px; overflow: hidden; background: #3F8FAE;
+  position: relative; height: 680px; overflow-y: auto; background: #3F8FAE;
+  scrollbar-width: thin; scrollbar-color: rgba(253, 251, 247, .3) transparent; overscroll-behavior: contain;
 }
 .dv .col {
   position: relative;
@@ -16,8 +17,6 @@
   background: #34D5C4; color: #04131D; font: 600 16px 'Instrument Sans', system-ui, sans-serif; cursor: pointer;
   transition: background-color .15s cubic-bezier(.22, 1, .36, 1), transform .12s cubic-bezier(.22, 1, .36, 1);
 }
-.dvw .ctl { display: flex; flex-direction: column; gap: 14px; width: 240px; pointer-events: auto; }
-.dvw .scrub { width: 100%; accent-color: #34D5C4; cursor: pointer; margin: 0; }
 .dvw .go:hover { background: #5FE6D7; }
 .dvw .go:active { transform: scale(.97); }
 .dvw .go svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
