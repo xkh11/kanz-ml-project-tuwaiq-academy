@@ -11,7 +11,6 @@ A 3-minute demo, three screens:
 Heat data is the saved NOAA Coral Reef Watch file (outputs/risk_today.csv); its date is shown in the header.
 Header videos: put hero_turtle.mp4, bleaching.mp4, reef_sharks.mp4 in app/static. Missing ones fall back to the photo.
 """
-import json
 from pathlib import Path
 
 import joblib
@@ -450,21 +449,3 @@ with tab_act:
                 with col:
                     html(stat(title, len(names), f"IUCN {cat}", tone=tone)
                          + f'<div class="kz-card kz-list">{tags}</div>')
-
-        head("Who it is for", "One map, three kinds of user")
-        users = [("Divers and travellers", "Free", "The healthiest reefs to dive today, and the rare animals you might meet there"),
-                 ("Dive operators and eco-tourism", "Paid dashboard", "Which sites to promote, and which to rest while they overheat"),
-                 ("Researchers and conservation", "Priority list", "Places rich in hidden life that are under heat stress today")]
-        html('<div class="kz-users">' + "".join(
-            f'<div><div class="k">{k}</div><h3>{t}</h3><p>{d}</p></div>' for t, k, d in users) + "</div>")
-
-
-# ---------------------------------------------------------------- footer (credits, one line)
-credits = json.loads((STATIC / "credits.json").read_text(encoding="utf-8"))
-shown = [f"{n}_video" if (STATIC / f"{n}.mp4").exists() and f"{n}_video" in credits else n
-         for n in ["hero_turtle", "bleaching", "reef_sharks"]]
-media_line = " · ".join(dict.fromkeys(f'{credits[k]["author"].split(" from ")[0]} ({credits[k]["license"]})'
-                                      for k in shown if k in credits))
-html(f'<div class="kz-foot">Kanz · Tuwaiq Academy · Data: OBIS, Global Coral Bleaching Database, NOAA Coral Reef Watch, '
-     f'Reef Life Survey / IMOS, NOAA Deep-Sea Coral &amp; Sponge Database, IUCN · '
-     f'Photos and videos: {media_line}; deep-sea photos NOAA</div>')
