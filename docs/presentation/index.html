@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كنز | العرض التقديمي</title>
+<meta name="description" content="كنز: نلقى حياة المحيط المخفية قبل لا تاخذها الحرارة. مشروع تعلّم الآلة، أكاديمية طويق">
+<meta name="theme-color" content="#04131D">
+<!-- fallback fonts for any computer without the local Thmanyah file -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Naskh+Arabic:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Thmanyah fonts: local file on the presenting laptop only (its licence forbids uploading the font) -->
+<link rel="stylesheet" href="fonts-local-only.css">
+<style>
+/* Kanz deck
+   Direction: deep, exact, hopeful. World: a night dive from the Red Sea surface to the abyss.
+   Signature: the depth gauge. Every slide is a deeper mark, from 0 m on the cover to 6,000 m at the end.
+   Two meaning colours: lagoon turquoise = life and treasure, coral = heat and danger. */
+:root {
+  --life: #34D5C4; --life-ink: #5FE6D7; --heat: #FF6A4D; --heat-ink: #FF8B73;
+  --text: #EEF6F6; --text-2: #B4C9CD; --muted: #86A2A9;
+  --card: rgba(11, 37, 53, .72); --line: rgba(238, 246, 246, .12); --line-2: rgba(238, 246, 246, .22);
+  --sans: "Thmanyah Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --serif: "Thmanyah Serif Display", "Noto Naskh Arabic", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #02080C; color: var(--text); font-family: var(--sans); overflow: hidden; }
+.stage { position: fixed; inset: 0; overflow: hidden; }
+.deck {
+  position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--s, 1)); background: var(--bg, #0A3550); transition: background-color 1.1s var(--ease);
+}
+
+/* ---------- slides ---------- */
+.slide { position: absolute; inset: 0; padding: 120px 200px 120px 220px; opacity: 0; visibility: hidden; transition: opacity .7s var(--ease), visibility 0s .7s; }
+.slide.on { opacity: 1; visibility: visible; transition: opacity .7s var(--ease), visibility 0s; }
+[data-a] { opacity: 0; transform: translateY(28px); }
+.slide.on [data-a] { animation: rise .8s var(--ease) both; animation-delay: var(--d, 0s); }
+@keyframes rise { to { opacity: 1; transform: none; } }
+[data-step] { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.slide.on[data-at="1"] [data-step="1"], .slide.on[data-at="2"] [data-step="1"], .slide.on[data-at="2"] [data-step="2"] { opacity: 1; transform: none; }
+
+/* photo backgrounds: a slow push-in while the slide is on */
+.photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.photo::after { content: ""; position: absolute; inset: 0; }
+.slide.on .photo { animation: push 14s linear both; }
+@keyframes push { from { transform: scale(1.0); } to { transform: scale(1.06); } }
+.photo.flip { transform-origin: center; }
+.slide.on .photo.flip { animation: pushflip 14s linear both; }
+@keyframes pushflip { from { transform: scaleX(-1) scale(1.0); } to { transform: scaleX(-1) scale(1.06); } }
+.photo.flip { transform: scaleX(-1); }
+
+/* ---------- type ---------- */
+.kicker { font-family: var(--sans); font-size: 28px; color: var(--life-ink); font-weight: 500; display: flex; align-items: center; gap: 16px; }
+.kicker::before { content: ""; width: 48px; height: 2px; background: var(--life); }
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.15; }
+h2 { font-size: 92px; margin-top: 24px; max-width: 1300px; }
+.lead { font-size: 38px; line-height: 1.6; color: var(--text-2); margin-top: 28px; max-width: 1100px; }
+.num { font-family: var(--sans); font-weight: 500; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.life { color: var(--life); } .heat { color: var(--heat); } .dim { color: var(--muted); }
+
+/* ---------- depth gauge (the signature) ---------- */
+.gauge { position: absolute; left: 64px; top: 170px; bottom: 170px; width: 120px; z-index: 5; pointer-events: none; }
+.gauge .rail { position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--line-2); }
+.gauge .tick { position: absolute; left: 4px; width: 10px; height: 2px; background: var(--line-2); }
+.gauge .mark { position: absolute; left: 0; width: 18px; height: 18px; margin-top: -9px; border-radius: 50%; background: var(--life);
+  border: 4px solid #04131D; transition: top 1.1s var(--ease); }
+.gauge .read { position: absolute; left: 30px; margin-top: -30px; padding: 6px 12px; border-radius: 10px; background: rgba(4, 19, 29, .72); transition: top 1.1s var(--ease); white-space: nowrap; direction: ltr; text-align: left; }
+.gauge .read b { display: block; font-family: var(--mono); font-weight: 500; font-size: 24px; color: var(--text); }
+.gauge .read span { display: block; font-family: var(--sans); font-size: 20px; color: var(--muted); direction: rtl; text-align: left; }
+.count-top { position: absolute; left: 64px; top: 64px; z-index: 5; font-family: var(--mono); font-size: 22px; color: var(--muted); direction: ltr; }
+.brand-top { position: absolute; left: 200px; top: 56px; z-index: 5; font-family: var(--serif); font-size: 32px; color: var(--text); opacity: .9; direction: ltr; }
+.brand-top span { color: var(--life); }
+.progress { position: absolute; top: 0; right: 0; height: 4px; background: var(--life); z-index: 6; transition: width .9s var(--ease); }
+
+/* ---------- controls ---------- */
+.ctrl { position: absolute; left: 64px; bottom: 56px; z-index: 6; display: flex; gap: 12px; direction: ltr; opacity: 0; transition: opacity .3s var(--ease); }
+.deck:hover .ctrl { opacity: 1; }
+.ctrl button { width: 56px; height: 56px; border-radius: 14px; border: 1px solid var(--line-2); background: rgba(4, 19, 29, .7); color: var(--text);
+  display: grid; place-items: center; cursor: pointer; transition: background-color .15s var(--ease), border-color .15s var(--ease), transform .12s var(--ease); }
+.ctrl button:hover { background: #113246; border-color: var(--life); }
+.ctrl button:active { transform: scale(.95); }
+.ctrl svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+.btn { display: inline-flex; align-items: center; gap: 14px; height: 76px; padding: 0 36px; border-radius: 16px; border: 0; background: var(--life); color: #04131D;
+  font: 700 30px var(--sans); cursor: pointer; transition: background-color .15s var(--ease), transform .12s var(--ease); }
+.btn:hover { background: var(--life-ink); }
+.btn:active { transform: scale(.97); }
+
+/* ---------- 0 cover ---------- */
+.s-cover .photo { background-image: url(img/hero_turtle.jpg); }
+.s-cover::before { content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(270deg, rgba(2, 12, 20, .9) 0%, rgba(2, 12, 20, .55) 42%, rgba(2, 12, 20, .05) 72%); }
+.s-cover .in { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; max-width: 1000px; }
+.s-cover h1 { font-size: 300px; line-height: 1; margin: 24px 0 8px; color: #fff; }
+.s-cover .tag { font-family: var(--serif); font-size: 60px; line-height: 1.3; color: #fff; max-width: 980px; }
+.s-cover .meta { margin-top: 48px; font-size: 30px; color: var(--text-2); }
+
+/* ---------- 1 hook ---------- */
+.s-hook { display: flex; flex-direction: column; justify-content: center; }
+.s-hook h2 { font-size: 120px; max-width: 1400px; }
+.reveal { margin-top: 64px; display: grid; grid-template-columns: auto 1fr; gap: 72px; align-items: center; max-width: 1500px; }
+.reveal .big { font-size: 260px; line-height: .9; color: var(--life); }
+.ocean-bar { height: 72px; border-radius: 18px; overflow: hidden; display: flex; background: #061722; border: 1px solid var(--line); }
+.ocean-bar i { display: block; height: 100%; background: var(--life); width: 28.7%; transform-origin: right; transform: scaleX(0); transition: transform 1.6s var(--ease) .2s; }
+.slide.on[data-at="1"] .ocean-bar i { transform: scaleX(1); }
+.ocean-legend { display: flex; justify-content: space-between; margin-top: 20px; font-size: 30px; color: var(--text-2); }
+.ocean-legend b { font-weight: 500; color: var(--text); }
+.punch { margin-top: 56px; font-family: var(--serif); font-size: 56px; color: #fff; }
+.hook-cta { margin-top: 64px; }
+.hook-cta .btn { transition: opacity .3s var(--ease), background-color .15s var(--ease), transform .12s var(--ease); }
+.slide[data-at="1"] .hook-cta .btn { opacity: 0; pointer-events: none; }
+
+/* ---------- 2 problem ---------- */
+.s-problem { padding: 0; display: grid; grid-template-columns: 1fr 820px; }
+.s-problem .text { padding: 120px 200px 120px 72px; display: flex; flex-direction: column; justify-content: center; }
+.s-problem .side { position: relative; overflow: hidden; }
+.s-problem .photo { background-image: url(img/bleaching.jpg); }
+.s-problem h2 { font-size: 84px; }
+.stats2 { margin-top: 56px; display: grid; gap: 44px; }
+.stat .v { font-size: 132px; line-height: 1; }
+.stat .k { font-size: 32px; color: var(--text-2); margin-top: 12px; max-width: 760px; line-height: 1.5; }
+.heatbars { display: grid; gap: 18px; margin-top: 20px; max-width: 860px; }
+.hb { display: grid; grid-template-columns: 220px 1fr 120px; gap: 24px; align-items: center; font-size: 28px; color: var(--text-2); }
+.hb .t { height: 28px; border-radius: 14px; background: rgba(238, 246, 246, .08); overflow: hidden; }
+.hb .t i { display: block; height: 100%; border-radius: 14px; transform-origin: right; transform: scaleX(0); transition: transform 1.4s var(--ease); }
+.slide.on .hb .t i { transform: scaleX(var(--w)); transition-delay: var(--d, .6s); }
+.hb b { font-size: 40px; font-weight: 500; text-align: left; }
+
+/* ---------- 3 solution ---------- */
+.chain { margin-top: 96px; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 36px; }
+.chain svg.line { position: absolute; top: 46px; right: 46px; left: 46px; height: 4px; width: calc(100% - 92px); overflow: visible; }
+.chain svg.line path { stroke: var(--life); stroke-width: 4; fill: none; stroke-dasharray: 1500; stroke-dashoffset: 1500; }
+.slide.on .chain svg.line path { animation: draw 2.4s var(--ease) .5s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.q { position: relative; }
+.q .dot { width: 92px; height: 92px; border-radius: 50%; background: #04131D; border: 3px solid var(--life); display: grid; place-items: center;
+  font-family: var(--mono); font-size: 30px; color: var(--life); position: relative; z-index: 1; }
+.q h3 { font-size: 46px; margin-top: 36px; }
+.q p { font-size: 28px; line-height: 1.5; color: var(--text-2); margin-top: 16px; }
+.q p b { color: var(--text); font-weight: 500; }
+.why { margin-top: 96px; padding-top: 36px; border-top: 1px solid var(--line); font-size: 34px; color: var(--text-2); max-width: 1400px; line-height: 1.6; }
+.why b { color: var(--text); font-weight: 500; }
+
+/* ---------- 4 data ---------- */
+.sources { margin-top: 72px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.src { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 36px 32px; min-height: 230px; transition: border-color .2s var(--ease), transform .2s var(--ease); }
+.src:hover { border-color: var(--life); transform: translateY(-4px); }
+.src .n { font-family: var(--sans); font-weight: 700; font-size: 36px; direction: ltr; text-align: right; }
+.src .w { font-size: 28px; color: var(--text-2); margin-top: 16px; line-height: 1.5; }
+.src .f { font-family: var(--sans); font-size: 46px; font-weight: 500; color: var(--life); margin-top: 18px; }
+.src.wide { grid-column: span 2; }
+.foot-note { margin-top: 40px; font-size: 28px; color: var(--muted); }
+
+/* ---------- 5 preprocessing ---------- */
+.dedupe { margin-top: 80px; display: flex; align-items: center; gap: 56px; }
+.dedupe .from { font-size: 170px; color: var(--muted); line-height: 1; }
+.dedupe .to { font-size: 220px; color: var(--life); line-height: 1; }
+.dedupe .arrow { font-size: 120px; color: var(--text-2); }
+.dedupe-k { font-size: 36px; color: var(--text-2); margin-top: 24px; max-width: 1300px; line-height: 1.5; }
+.dedupe-k b { color: var(--text); font-weight: 500; }
+.decisions { margin-top: 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 1500px; }
+.dec { border-top: 2px solid var(--life); padding-top: 24px; font-size: 32px; line-height: 1.55; color: var(--text-2); }
+.dec b { display: block; font-family: var(--serif); font-weight: 500; font-size: 44px; color: var(--text); margin-bottom: 8px; }
+
+/* ---------- 6 models ---------- */
+.s-models .cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 96px; margin-top: 64px; align-items: start; }
+.mbars { display: grid; gap: 20px; }
+.mb { display: grid; grid-template-columns: 300px 1fr 110px; gap: 24px; align-items: center; font-size: 30px; color: var(--text-2); }
+.mb .lab { direction: ltr; text-align: right; }
+.mb .t { height: 36px; border-radius: 10px; background: rgba(238, 246, 246, .06); overflow: hidden; }
+.mb .t i { display: block; height: 100%; border-radius: 10px; background: #3C5D6B; transform-origin: right; transform: scaleX(0); transition: transform 1.3s var(--ease); }
+.slide.on .mb .t i { transform: scaleX(var(--w)); transition-delay: var(--d); }
+.mb b { font-family: var(--sans); font-size: 34px; font-weight: 500; text-align: left; color: var(--text); }
+.mb.win { color: var(--text); }
+.mb.win .t i { background: var(--life); }
+.mb.win b { color: var(--life); }
+.mb.base .t i { background: rgba(255, 106, 77, .5); }
+.mb.base { color: var(--muted); }
+.chart-cap { font-size: 26px; color: var(--muted); margin-top: 20px; }
+.notes { display: grid; gap: 40px; }
+.note { font-size: 32px; line-height: 1.55; color: var(--text-2); }
+.note b { display: block; font-family: var(--serif); font-weight: 500; font-size: 46px; color: var(--text); margin-bottom: 8px; }
+
+/* ---------- 7 results ---------- */
+.res { margin-top: 56px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.rcard { background: var(--card); border: 1px solid var(--line); border-radius: 26px; padding: 40px 48px; }
+.rcard .k { font-size: 32px; color: var(--text-2); }
+.rcard .row { display: flex; align-items: baseline; gap: 28px; margin-top: 16px; }
+.rcard .v { font-size: 136px; line-height: 1; color: var(--life); }
+.rcard .vs { font-size: 28px; color: var(--muted); white-space: nowrap; }
+.rcard .vs .num { font-size: 44px; color: var(--text-2); }
+.rcard .plain { margin-top: 28px; font-size: 34px; line-height: 1.5; color: var(--text); }
+.rbars { margin-top: 28px; display: grid; gap: 12px; }
+.rb { height: 20px; border-radius: 10px; background: rgba(238, 246, 246, .06); overflow: hidden; }
+.rb i { display: block; height: 100%; border-radius: 10px; transform-origin: right; transform: scaleX(0); transition: transform 1.4s var(--ease); }
+.slide.on .rb i { transform: scaleX(var(--w)); transition-delay: var(--d); }
+.jazan { margin-top: 32px; display: flex; align-items: center; gap: 28px; padding: 32px 44px; border-radius: 22px; background: rgba(255, 106, 77, .12); border: 1px solid rgba(255, 106, 77, .4); font-size: 40px; }
+.jazan .num { font-size: 80px; color: var(--heat); }
+.jazan b { font-weight: 500; }
+
+/* ---------- 8 limits ---------- */
+.limits { margin-top: 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.lim { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 44px 40px; min-height: 380px; }
+.lim .i { font-family: var(--mono); font-size: 26px; color: var(--heat-ink); }
+.lim h3 { font-size: 50px; margin-top: 22px; }
+.lim p { font-size: 32px; line-height: 1.55; color: var(--text-2); margin-top: 20px; }
+.lim p .num { color: var(--text); }
+.honest { margin-top: 56px; font-family: var(--serif); font-size: 56px; color: #fff; }
+
+/* ---------- 9 users ---------- */
+.users { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.user { border-radius: 26px; overflow: hidden; background: var(--card); border: 1px solid var(--line); transition: transform .25s var(--ease), border-color .25s var(--ease); }
+.user:hover { transform: translateY(-4px); border-color: var(--life); }
+.user .pic { height: 340px; background-size: cover; background-position: center; transition: transform .6s var(--ease); }
+.user:hover .pic { transform: scale(1.03); }
+.user .body { padding: 36px 40px 44px; }
+.user .tier { font-size: 26px; color: var(--life-ink); }
+.user h3 { font-size: 54px; margin-top: 10px; }
+.user p { font-size: 32px; line-height: 1.5; color: var(--text-2); margin-top: 14px; }
+
+/* ---------- 10 demo hand-off ---------- */
+.s-demo { display: grid; grid-template-columns: 1fr 860px; gap: 40px; align-items: center; }
+.s-demo h2 { font-size: 112px; }
+.s-demo .lead b { color: var(--text); font-weight: 500; }
+.globe { width: 860px; height: 860px; position: relative; cursor: grab; }
+.globe:active { cursor: grabbing; }
+.link { margin-top: 56px; display: inline-flex; align-items: center; gap: 18px; font-family: var(--mono); font-size: 34px; color: var(--life-ink); direction: ltr;
+  padding: 20px 28px; border-radius: 16px; border: 1px solid var(--line-2); background: rgba(4, 19, 29, .6); text-decoration: none; transition: border-color .15s var(--ease); }
+.link:hover { border-color: var(--life); }
+.film { margin-top: 48px; display: flex; align-items: center; gap: 28px; max-width: 760px; }
+.film .play { width: 96px; height: 96px; flex: none; border-radius: 24px; border: 0; background: var(--life); color: #04131D; display: grid; place-items: center;
+  cursor: pointer; transition: background-color .15s var(--ease), transform .12s var(--ease); }
+.film .play:hover { background: var(--life-ink); }
+.film .play:active { transform: scale(.95); }
+.film .play svg { width: 40px; height: 40px; fill: currentColor; }
+.film .when { flex: 1; }
+.film .date { font-family: var(--sans); font-size: 40px; font-weight: 500; color: var(--text); }
+.film .scrub { width: 100%; margin-top: 14px; accent-color: var(--heat); height: 28px; cursor: pointer; direction: ltr; }
+.yr-count { margin-top: 40px; display: flex; align-items: center; gap: 28px; }
+.yr-count .num { font-size: 150px; line-height: 1; }
+.yr-count .k { font-size: 30px; color: var(--text-2); line-height: 1.4; }
+.s-demo .after { opacity: 0; transform: translateY(16px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.s-demo.done .after { opacity: 1; transform: none; }
+.s-demo p.after { margin-top: 40px; font-family: var(--serif); font-size: 46px; line-height: 1.35; color: #fff; max-width: 860px; }
+.s-demo p.after b { color: var(--heat); font-weight: 500; }
+.s-demo a.after { transition-delay: .3s; }
+.demo-stats { margin-top: 56px; display: flex; gap: 72px; }
+.demo-stats .v { font-size: 104px; line-height: 1; }
+.demo-stats .k { font-size: 28px; color: var(--text-2); margin-top: 10px; }
+
+/* ---------- 11 closing ---------- */
+.next-steps { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 72px; max-width: 1500px; }
+.ns { display: grid; grid-template-columns: 56px 1fr; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--line); font-size: 34px; }
+.ns .i { font-family: var(--mono); font-size: 26px; color: var(--life); padding-top: 6px; }
+.ns small { display: block; font-size: 26px; color: var(--muted); margin-top: 6px; }
+.final { margin-top: 48px; font-family: var(--serif); font-size: 60px; line-height: 1.35; max-width: 1500px; }
+.final .life { display: block; }
+.thanks { margin-top: 28px; font-size: 32px; color: var(--text-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+}
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="deck" id="deck">
+  <div class="progress" id="progress"></div>
+  <div class="count-top" id="count"></div>
+  <div class="brand-top" id="brand">كنز <span>·</span> Kanz</div>
+  <div class="gauge" id="gauge"><div class="rail"></div><div class="mark" id="mark"></div><div class="read" id="read"><b></b><span></span></div></div>
+
+  <!-- 0 · cover -->
+  <section class="slide s-cover" data-depth="0">
+    <div class="photo flip" role="img" aria-label="سلحفاة صقرية عند شعاب البحر الأحمر"></div>
+    <div class="in">
+      <div class="kicker" data-a style="--d:.1s">مشروع تعلّم الآلة · أكاديمية طويق</div>
+      <h1 data-a style="--d:.2s">كنز</h1>
+      <p class="tag" data-a style="--d:.35s">نلقى حياة المحيط المخفية قبل لا تاخذها الحرارة</p>
+      <p class="meta" data-a style="--d:.5s">مودلين تعلّم آلة · بيانات علمية حقيقية · تطبيق شغّال</p>
+    </div>
+  </section>
+
+  <!-- 1 · hook -->
+  <section class="slide s-hook" data-depth="10" data-steps="1">
+    <div class="kicker" data-a style="--d:.1s">قبل نبدأ، سؤال</div>
+    <h2 data-a style="--d:.2s">كم رسمنا من قاع المحيط بالتفصيل؟</h2>
+    <div class="hook-cta" data-a style="--d:.4s"><button class="btn" id="revealBtn">اكشف الجواب</button></div>
+    <div class="reveal" data-step="1">
+      <div class="big num"><span class="count" data-to="28.7" data-dec="1">0</span>%</div>
+      <div>
+        <div class="ocean-bar"><i></i></div>
+        <div class="ocean-legend"><span>مرسوم <b class="num">28.7%</b></span><span>ما شافه أحد <b class="num">71.3%</b></span></div>
+      </div>
+    </div>
+    <p class="punch" data-step="1">أكثر من ثلثين المحيط ما شافه أحد. <span class="life">وهناك الكنز</span></p>
+  </section>
+
+  <!-- 2 · problem -->
+  <section class="slide s-problem" data-depth="30">
+    <div class="text">
+      <div class="kicker" data-a style="--d:.1s">المشكلة</div>
+      <h2 data-a style="--d:.2s">نخسر كائنات قبل لا نعرف إنها موجودة</h2>
+      <div class="stats2">
+        <div class="stat" data-a style="--d:.4s">
+          <div class="v num life"><span class="count" data-to="18.9" data-dec="1">0</span>%</div>
+          <div class="k">من الكائنات البحرية المعروفة ما انشافت إلا مرة وحدة</div>
+        </div>
+        <div class="stat" data-a style="--d:.55s">
+          <div class="k" style="margin:0 0 6px;color:var(--text)">الابيضاض الشديد يزيد كل ما تراكمت الحرارة</div>
+          <div class="heatbars">
+            <div class="hb"><span>بدون حرارة زايدة</span><div class="t"><i style="--w:.13;background:#3C5D6B;--d:.8s"></i></div><b class="num">13%</b></div>
+            <div class="hb"><span>حرارة قوية</span><div class="t"><i style="--w:.59;background:var(--heat);--d:1.1s"></i></div><b class="num heat">59%</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side"><div class="photo" role="img" aria-label="شعاب مرجانية مبيضّة من الحرارة"></div></div>
+  </section>
+
+  <!-- 3 · solution -->
+  <section class="slide s-solution" data-depth="60">
+    <div class="kicker" data-a style="--d:.1s">الحل</div>
+    <h2 data-a style="--d:.2s">كنز يجاوب على خمس أسئلة</h2>
+    <div class="chain">
+      <svg class="line" viewBox="0 0 1000 4" preserveAspectRatio="none"><path d="M1000 2 L0 2"/></svg>
+      <div class="q" data-a style="--d:.5s"><div class="dot">1</div><h3>وين الكنز؟</h3><p><b>المودل الأول</b>: خريطة الكنز تقدّر الكائنات اللي ما انسجلت</p></div>
+      <div class="q" data-a style="--d:.8s"><div class="dot">2</div><h3>إيش يهدده؟</h3><p><b>المودل الثاني</b>: يتنبأ بابيضاض الشعاب من الحرارة</p></div>
+      <div class="q" data-a style="--d:1.1s"><div class="dot">3</div><h3>وين نخسره أول؟</h3><p><b>المودلين مع بعض</b>: الكنز المهدد اليوم</p></div>
+      <div class="q" data-a style="--d:1.4s"><div class="dot">4</div><h3>فيه أمل؟</h3><p><b>البحر الأحمر</b>: شعابنا أقوى من غيرها</p></div>
+      <div class="q" data-a style="--d:1.7s"><div class="dot">5</div><h3>إيش نسوي؟</h3><p><b>مستكشف الغوص</b>: نغوص في الصحي ونريّح المتعب</p></div>
+    </div>
+    <p class="why" data-a style="--d:2s"><b>ليش تعلّم آلة؟</b> لأننا نقدّر شي ما نقدر نقيسه: كائنات ما انسجلت، وابيضاض ما صار للحين</p>
+  </section>
+
+  <!-- 4 · data -->
+  <section class="slide s-data" data-depth="120">
+    <div class="kicker" data-a style="--d:.1s">البيانات</div>
+    <h2 data-a style="--d:.2s">بيانات حقيقية من 8 مصادر علمية</h2>
+    <div class="sources">
+      <div class="src" data-a style="--d:.35s"><div class="n">OBIS</div><div class="w">أنواع الكائنات البحرية وتاريخ اكتشافها</div><div class="f num">164K</div></div>
+      <div class="src" data-a style="--d:.42s"><div class="n">Bleaching DB</div><div class="w">قاعدة الابيضاض العالمية، مسوح للشعاب</div><div class="f num">41K</div></div>
+      <div class="src" data-a style="--d:.49s"><div class="n">Coral Reef Watch</div><div class="w">حرارة يومية لمناطق الشعاب من NOAA</div><div class="f num">214</div></div>
+      <div class="src" data-a style="--d:.56s"><div class="n">Reef Life Survey</div><div class="w">أسماك ومرجان في مواقع الغوص</div><div class="f num">2,648</div></div>
+      <div class="src" data-a style="--d:.63s"><div class="n">NOAA ETOPO</div><div class="w">أعماق المحيط</div></div>
+      <div class="src" data-a style="--d:.7s"><div class="n">HadISST</div><div class="w">حرارة سطح البحر</div></div>
+      <div class="src" data-a style="--d:.77s"><div class="n">NOAA Deep-Sea</div><div class="w">صور كائنات الأعماق</div></div>
+      <div class="src" data-a style="--d:.84s"><div class="n">Our World in Data</div><div class="w">احترار المحيط من 1850</div></div>
+    </div>
+    <p class="foot-note" data-a style="--d:1s">10 ملفات · آخر بيانات حرارة: <span class="num">10 نوفمبر 2026</span></p>
+  </section>
+
+  <!-- 5 · preprocessing -->
+  <section class="slide s-prep" data-depth="200">
+    <div class="kicker" data-a style="--d:.1s">تجهيز البيانات</div>
+    <h2 data-a style="--d:.2s">قبل المودل، نظّفنا البيانات</h2>
+    <div class="dedupe" data-a style="--d:.4s">
+      <span class="from num">34,515</span><span class="arrow">←</span><span class="to num"><span class="count" data-to="23271" data-sep="1">0</span></span>
+    </div>
+    <p class="dedupe-k" data-a style="--d:.6s">عيّنة ابيضاض. <b>كل عيّنة كانت مكررة</b>، خلّيناها صف واحد. لو تركناها، المودل بيحفظ بدل ما يتعلّم</p>
+    <div class="decisions">
+      <div class="dec" data-a style="--d:.8s"><b>قراءات غلط</b>قراءات حرارة مستحيلة، اعتبرناها ناقصة بدل ما نصدّقها</div>
+      <div class="dec" data-a style="--d:.95s"><b>خريطة المحيط</b>قسّمناه لـ <span class="num">1,881</span> خلية، وربطنا كل موقع غوص بأقرب محطة حرارة</div>
+    </div>
+  </section>
+
+  <!-- 6 · models -->
+  <section class="slide s-models" data-depth="450">
+    <div class="kicker" data-a style="--d:.1s">المودلات</div>
+    <h2 data-a style="--d:.2s">جرّبنا خمسة، واخترنا الأقوى والأبسط</h2>
+    <div class="cols">
+      <div data-a style="--d:.35s">
+        <div class="mbars">
+          <div class="mb"><span class="lab">Voting</span><div class="t"><i style="--w:.684;--d:.5s"></i></div><b class="num">0.68</b></div>
+          <div class="mb win"><span class="lab">Random Forest</span><div class="t"><i style="--w:.682;--d:.6s"></i></div><b class="num">0.68</b></div>
+          <div class="mb"><span class="lab">Gradient Boosting</span><div class="t"><i style="--w:.677;--d:.7s"></i></div><b class="num">0.68</b></div>
+          <div class="mb"><span class="lab">KNN</span><div class="t"><i style="--w:.633;--d:.8s"></i></div><b class="num">0.63</b></div>
+          <div class="mb"><span class="lab">Logistic Regression</span><div class="t"><i style="--w:.485;--d:.9s"></i></div><b class="num">0.49</b></div>
+          <div class="mb base"><span class="lab">baseline: الحرارة بس</span><div class="t"><i style="--w:.425;--d:1s"></i></div><b class="num">0.43</b></div>
+        </div>
+        <p class="chart-cap">درجة كل مودل على شعاب ما شافها (كل ما زادت أحسن) · macro F1</p>
+      </div>
+      <div class="notes">
+        <div class="note" data-a style="--d:.7s"><b>الفائز: Random Forest</b>تقارب مع Voting، فاخترنا الأبسط. وبعد التحسين وصل <span class="num">0.70</span></div>
+        <div class="note" data-a style="--d:.85s"><b>اختبار عادل</b>عشان المودل ما يغشّ، اختبرناه على شعاب ومناطق عمره ما شافها</div>
+        <div class="note" data-a style="--d:1s"><b><span class="num">12</span> معلومة بدل <span class="num">38</span></b>أقوى على السنين الجاية، وكلها متوفرة يومياً من NOAA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · results -->
+  <section class="slide s-results" data-depth="1000">
+    <div class="kicker" data-a style="--d:.1s">النتائج</div>
+    <h2 data-a style="--d:.2s">المودلين يغلبون الـ baseline</h2>
+    <div class="res">
+      <div class="rcard" data-a style="--d:.4s">
+        <div class="k">خريطة الكنز <span class="dim">(R²)</span></div>
+        <div class="row"><span class="v num"><span class="count" data-to="0.82" data-dec="2">0</span></span><span class="vs">baseline <span class="num">0.68</span></span></div>
+        <div class="rbars"><div class="rb"><i style="--w:.82;background:var(--life);--d:.7s"></i></div><div class="rb"><i style="--w:.68;background:#3C5D6B;--d:.85s"></i></div></div>
+        <p class="plain">يفسّر <span class="num">82%</span> من الفرق في عدد الكائنات بين المناطق</p>
+      </div>
+      <div class="rcard" data-a style="--d:.55s">
+        <div class="k">خطر الابيضاض <span class="dim">(macro F1)</span></div>
+        <div class="row"><span class="v num"><span class="count" data-to="0.70" data-dec="2">0</span></span><span class="vs">baseline <span class="num">0.43</span></span></div>
+        <div class="rbars"><div class="rb"><i style="--w:.70;background:var(--life);--d:.85s"></i></div><div class="rb"><i style="--w:.43;background:#3C5D6B;--d:1s"></i></div></div>
+        <p class="plain">يلتقط <span class="num">7</span> من كل <span class="num">10</span> حالات ابيضاض شديد</p>
+      </div>
+    </div>
+    <div class="jazan" data-a style="--d:.9s"><span class="num">#4</span><span><b>جازان اليوم رابع العالم</b> في الكنز المهدد، والأولى في مياهنا</span></div>
+  </section>
+
+  <!-- 8 · limits -->
+  <section class="slide s-limits" data-depth="2000">
+    <div class="kicker" data-a style="--d:.1s">الحدود</div>
+    <h2 data-a style="--d:.2s">وين يضعف المودل؟ بصراحة</h2>
+    <div class="limits">
+      <div class="lim" data-a style="--d:.4s"><div class="i">01</div><h3>السنين الجاية</h3><p>درجته تنزل لـ <span class="num">0.50</span>، فالخطر اليوم تقدير مو تنبؤ أكيد</p></div>
+      <div class="lim" data-a style="--d:.55s"><div class="i">02</div><h3>البيانات تتبع العلماء</h3><p>السجلات أكثر وين غاصوا، فالكائنات المخفية تقدير مو عدّ</p></div>
+      <div class="lim" data-a style="--d:.7s"><div class="i">03</div><h3>الشعاب الحارة جداً</h3><p>لما تتراكم الحرارة كثير (فوق <span class="num">12</span>) يوصل المودل لسقف ويثبت</p></div>
+    </div>
+    <p class="honest" data-a style="--d:.9s">نعرف وين يصيب، <span class="life">ووين يغلط</span></p>
+  </section>
+
+  <!-- 9 · users -->
+  <section class="slide s-users" data-depth="3000">
+    <div class="kicker" data-a style="--d:.1s">مين يستفيد</div>
+    <h2 data-a style="--d:.2s">خريطة وحدة، لثلاث فئات</h2>
+    <div class="users">
+      <div class="user" data-a style="--d:.4s"><div class="pic" style="background-image:url(img/reef_sharks.jpg)" role="img" aria-label="قروش الشعاب"></div>
+        <div class="body"><div class="tier">مجاني</div><h3>الغوّاصين</h3><p>دليل لأصحّ الشعاب اليوم، والكائنات النادرة اللي ممكن يشوفونها</p></div></div>
+      <div class="user" data-a style="--d:.55s"><div class="pic" style="background-image:url(img/red_sea_reef.jpg)" role="img" aria-label="شعاب البحر الأحمر"></div>
+        <div class="body"><div class="tier">لوحة متابعة</div><h3>مراكز الغوص</h3><p>أي موقع يتروّج له، وأي واحد يرتاح لما يسخن</p></div></div>
+      <div class="user" data-a style="--d:.7s"><div class="pic" style="background-image:url(https://www.ncei.noaa.gov/waf/dsc-data/images/000419/419588.jpg);background-color:#071c29" role="img" aria-label="مرجان أعماق البحر"></div>
+        <div class="body"><div class="tier">قائمة أولويات</div><h3>الباحثين والمحميات</h3><p>الأماكن الغنية بالحياة المخفية واللي تحت الحرارة اليوم</p></div></div>
+    </div>
+  </section>
+
+  <!-- 10 · time machine, then hand-off to the live demo -->
+  <section class="slide s-demo" data-depth="4500" data-steps="1">
+    <div>
+      <div class="kicker" data-a style="--d:.1s">سنة كاملة من الحرارة</div>
+      <h2 data-a style="--d:.2s">شوفوا الحرارة تتحرك</h2>
+      <p class="lead" data-a style="--d:.35s">كل عمود منطقة شعاب حقيقية. كل ما <b>احمرّ وطال</b>، زادت الحرارة المتراكمة. سنة من بيانات NOAA في 20 ثانية</p>
+      <div class="film" data-a style="--d:.5s">
+        <button class="play" id="playBtn" aria-label="شغّل سنة الحرارة"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="when"><div class="date" id="yrDate"></div><input class="scrub" id="yrScrub" type="range" min="0" max="51" value="0" aria-label="الأسبوع"></div>
+      </div>
+      <div class="yr-count" data-a style="--d:.6s"><span class="num heat" id="yrCount">0</span><span class="k">منطقة شعاب على إنذار ابيضاض<br>من أصل 214</span></div>
+      <p class="after" id="yrAfter">وهذا اليوم بالضبط. <b>جازان رابع العالم</b>، والحين خلونا نشوفه شغّال</p>
+      <a class="link after" href="https://kanz-ml.streamlit.app/" target="_blank" rel="noopener">kanz-ml.streamlit.app</a>
+    </div>
+    <div class="globe" id="globe" data-a style="--d:.3s" aria-label="كرة أرضية تفاعلية لمناطق الشعاب"></div>
+  </section>
+
+  <!-- 11 · closing -->
+  <section class="slide s-close" data-depth="6000">
+    <div class="kicker" data-a style="--d:.1s">الخطوات الجاية</div>
+    <h2 data-a style="--d:.2s">وين نروح بعدها</h2>
+    <div class="next-steps">
+      <div class="ns" data-a style="--d:.35s"><span class="i">01</span><span>تنبيه مبكر قبل أسابيع<small>نربط توقعات NOAA لأربعة شهور</small></span></div>
+      <div class="ns" data-a style="--d:.42s"><span class="i">02</span><span>نضيف التلوث: البلاستيك والنفط<small>لما تتوفر بيانات عالمية أفضل</small></span></div>
+      <div class="ns" data-a style="--d:.49s"><span class="i">03</span><span>تحديث يومي تلقائي<small>بدل لقطة 10 نوفمبر</small></span></div>
+      <div class="ns" data-a style="--d:.56s"><span class="i">04</span><span>بيانات سعودية ميدانية<small>تقوّي المودل في البحر الأحمر</small></span></div>
+      <div class="ns" data-a style="--d:.63s"><span class="i">05</span><span>الغوّاصين يسجّلون مشاهداتهم<small>ويسدّون فجوات خريطة الكنز</small></span></div>
+      <div class="ns" data-a style="--d:.7s"><span class="i">06</span><span>واجهة عربية وتطبيق جوال<small>يوصل للغوّاص مباشرة</small></span></div>
+    </div>
+    <p class="final" data-a style="--d:.9s">كل شعاب نخسرها تاخذ معها كائنات ما تعرّفنا عليها. <span class="life">كنز يلقاها قبل.</span></p>
+    <p class="thanks" data-a style="--d:1.1s">شكراً لكم</p>
+  </section>
+
+  <div class="ctrl">
+    <button id="prev" aria-label="الشريحة السابقة"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button id="next" aria-label="الشريحة التالية"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button id="full" aria-label="ملء الشاشة"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+</div>
+</div>
+
+<script src="vendor/globe.gl.min.js"></script>
+<script src="vendor/land.js"></script>
+<script src="vendor/reefs.js"></script>
+<script src="vendor/heatyear.js"></script>
+<script>
+(() => {
+  const deck = document.getElementById("deck");
+  const slides = [...deck.querySelectorAll(".slide")];
+  const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ZONES = [[0, "السطح"], [1, "منطقة الشمس"], [200, "منطقة الشفق"], [1000, "منطقة الظلام"], [4000, "الأعماق السحيقة"]];
+  // water gets darker the deeper the slide
+  const SURFACE = [10, 53, 80], ABYSS = [2, 7, 11];
+  let cur = 0;
+
+  // fit the 1920x1080 canvas to any screen
+  const fit = () => deck.style.setProperty("--s", Math.min(innerWidth / 1920, innerHeight / 1080));
+  addEventListener("resize", fit); fit();
+
+  // depth gauge: one tick per slide, on a log-like scale so the shallow slides do not bunch up
+  const gauge = document.getElementById("gauge"), mark = document.getElementById("mark"), read = document.getElementById("read");
+  const depthAt = (s) => +s.dataset.depth;
+  const yOf = (i) => (i / (slides.length - 1)) * 100;
+  slides.forEach((s, i) => { const t = document.createElement("div"); t.className = "tick"; t.style.top = yOf(i) + "%"; gauge.appendChild(t); });
+
+  const fmt = (v, dec, sep) => { const s = (+v).toFixed(dec); return sep ? (+s).toLocaleString("en-US") : s; };
+  function countUp(el) {
+    const to = +el.dataset.to, dec = +(el.dataset.dec || 0), sep = el.dataset.sep;
+    if (REDUCED) { el.textContent = fmt(to, dec, sep); return; }
+    const t0 = performance.now(), dur = 1600;
+    const step = (now) => { const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(to * e, dec, sep); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  const counts = (root) => root.querySelectorAll(".count").forEach(countUp);
+
+  function show(i) {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle("on", k === i));
+    const s = slides[i]; cur = i;
+    s.dataset.at = "0";
+    const d = depthAt(s), t = Math.min(1, Math.log10(1 + d) / Math.log10(1 + 6000));
+    const c = SURFACE.map((a, k) => Math.round(a + (ABYSS[k] - a) * t));
+    deck.style.setProperty("--bg", `rgb(${c})`);
+    mark.style.top = read.style.top = yOf(i) + "%";
+    read.querySelector("b").textContent = (d === 0 ? "0" : "−" + d.toLocaleString("en-US")) + " m";
+    read.querySelector("span").textContent = [...ZONES].reverse().find(([z]) => d >= z)[1];
+    document.getElementById("count").textContent = String(i + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
+    document.getElementById("progress").style.width = ((i + 1) / slides.length * 100) + "%";
+    s.querySelectorAll(".count").forEach((el) => { if (!el.closest("[data-step]")) countUp(el); });
+    if (s.classList.contains("s-demo")) { startGlobe(); week(frame); } else stopYear();
+    history.replaceState(null, "", "#" + (i + 1));
+  }
+
+  // builds: a slide with steps reveals them before moving on
+  function advance() {
+    const s = slides[cur], steps = +(s.dataset.steps || 0), at = +(s.dataset.at || 0);
+    if (at < steps) {
+      s.dataset.at = String(at + 1);
+      if (s.classList.contains("s-demo")) { if (!timer && !s.classList.contains("done")) playYear(); return; }
+      counts(s.querySelector(`[data-step="${at + 1}"]`) || s); return;
+    }
+    show(cur + 1);
+  }
+  const back = () => show(cur - 1);
+
+  // keyboard: same as the app (right arrow = next), plus what clickers send
+  addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter", "ArrowDown"].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (["ArrowLeft", "PageUp", "ArrowUp", "Backspace"].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === "f" || e.key === "F") toggleFull();
+    else if (e.key === "Home") show(0);
+    else if (e.key === "End") show(slides.length - 1);
+  });
+  const toggleFull = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  document.getElementById("next").onclick = advance;
+  document.getElementById("prev").onclick = back;
+  document.getElementById("full").onclick = toggleFull;
+  document.getElementById("revealBtn").onclick = (e) => { e.stopPropagation(); advance(); };
+
+  // the time machine on the globe slide: a year of heat, week by week, ending today on the Red Sea
+  let globe = null, frame = 0, timer = null;
+  const YEAR = window.KZ_YEAR || { weeks: [], stations: [], dhw: [] };
+  const N = YEAR.weeks.length;
+  const heat = ["#3E7F8C", "#8E8F6E", "#D9A15E", "#FF8A5B", "#FF5A3C", "#FF2E1F"];
+  const mix = (t) => { t = Math.max(0, Math.min(1, t)) * 5; const i = Math.floor(t), f = t - i, a = heat[i], b = heat[Math.min(i + 1, 5)];
+    const c = (h, k) => parseInt(h.slice(1 + 2 * k, 3 + 2 * k), 16);
+    return "#" + [0, 1, 2].map((k) => Math.round(c(a, k) + (c(b, k) - c(a, k)) * f).toString(16).padStart(2, "0")).join(""); };
+  const playBtn = document.getElementById("playBtn"), scrub = document.getElementById("yrScrub");
+  const yrDate = document.getElementById("yrDate"), yrCount = document.getElementById("yrCount");
+  const demo = deck.querySelector(".s-demo");
+  const PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>', PAUSE = '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+
+  function week(i) {
+    frame = i;
+    const pts = YEAR.stations.map((st, k) => ({ ...st, dhw: YEAR.dhw[i][k] }));
+    if (globe) globe.pointsData(pts).ringsData(REDUCED ? [] : pts.filter((p) => p.dhw >= 8));
+    yrDate.textContent = "أسبوع " + YEAR.weeks[i];
+    yrCount.textContent = pts.filter((p) => p.dhw >= 4).length;
+    scrub.value = i;
+  }
+  function stopYear() { clearInterval(timer); timer = null; playBtn.innerHTML = PLAY; }
+  function playYear() {
+    if (!N) return;
+    if (frame >= N - 1) { week(0); demo.classList.remove("done"); }
+    playBtn.innerHTML = PAUSE;
+    if (globe) globe.controls().autoRotate = !REDUCED;
+    timer = setInterval(() => {
+      if (frame >= N - 1) {                               // the year ends on today: turn to the Red Sea
+        stopYear(); demo.classList.add("done");
+        if (globe) { globe.controls().autoRotate = false; globe.pointOfView({ lat: 20, lng: 40, altitude: 1.8 }, 1800); }
+        return;
+      }
+      week(frame + 1);
+    }, REDUCED ? 500 : 380);
+  }
+  playBtn.onclick = (e) => { e.stopPropagation(); timer ? stopYear() : playYear(); if (demo.dataset.at === "0") demo.dataset.at = "1"; };
+  scrub.oninput = () => { stopYear(); week(+scrub.value); demo.classList.toggle("done", +scrub.value === N - 1); };
+
+  function startGlobe() {
+    if (globe || !window.Globe) return;
+    const el = document.getElementById("globe");
+    globe = Globe({ animateIn: !REDUCED })(el).width(860).height(860).backgroundColor("rgba(0,0,0,0)")
+      .showAtmosphere(true).atmosphereColor("#34D5C4").atmosphereAltitude(.14)
+      .polygonsData((window.KZ_LAND || {}).features || []).polygonAltitude(.005)
+      .polygonCapColor(() => "#D8CBAF").polygonSideColor(() => "rgba(0,0,0,0)").polygonStrokeColor(() => "rgba(31,27,22,.18)")
+      .pointLat("lat").pointLng("lon").pointRadius(.5).pointsTransitionDuration(REDUCED ? 0 : 280)
+      .pointAltitude((r) => .01 + Math.min(r.dhw, 20) / 20 * .32).pointColor((r) => mix(r.dhw / 16))
+      .pointLabel((r) => `<div style="font:500 18px var(--sans);background:#0B2535;color:#EEF6F6;padding:10px 14px;border-radius:10px;border:1px solid rgba(238,246,246,.16)">${r.n}<br><span style="color:#FF8B73;font-size:16px">تراكم الحرارة ${r.dhw}</span></div>`)
+      .ringLat("lat").ringLng("lon").ringColor(() => (t) => `rgba(255,106,77,${1 - t})`)
+      .ringMaxRadius(3).ringPropagationSpeed(1.4).ringRepeatPeriod(1600);
+    globe.globeMaterial().color.set("#0B3A52");
+    const c = globe.controls(); c.enableZoom = false; c.autoRotate = !REDUCED; c.autoRotateSpeed = .7;
+    globe.pointOfView({ lat: 15, lng: -45, altitude: 2.2 }, 0);
+    week(timer ? frame : 0);
+  }
+
+  const start = parseInt(location.hash.slice(1), 10);
+  show(Number.isFinite(start) ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>

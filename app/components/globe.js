@@ -45,7 +45,8 @@ function riskLayer(g, d, state) {
     .pointAltitude((p) => 0.01 + (p.v / 100) * 0.32)
     .pointRadius((p) => (p.name === d.focus ? 0.75 : 0.42))
     .pointColor((p) => (p.name === d.focus ? "#34D5C4" : mix(HEAT, p.dhw / 16)))
-    .pointLabel((p) => tip(p.name, [["Treasure at risk", fmt(p.v)], ["Heat stress", p.dhw.toFixed(1) + " DHW"], ["Severe risk", Math.round(p.risk * 100) + "%"], ["Rank", "#" + p.rank + " of 214"]], p.lat, p.lon))
+    .pointLabel((p) => tip(p.name, [["Rank", "#" + p.rank + " of 214"], ["Chance of severe bleaching", Math.round(p.risk * 100) + "%"],
+      ["Heat build-up", p.dhw.toFixed(1) + (p.dhw >= 8 ? " · severe" : p.dhw >= 4 ? " · high" : " · low")], ["Treasure-at-risk score", fmt(p.v) + " / 100"]], p.lat, p.lon))
     .ringsData(REDUCED ? [] : pts.filter((p) => d.rings.includes(p.name))).ringLat("lat").ringLng("lon")
     .ringColor(() => (t) => `rgba(232,140,110,${(1 - t) * 0.9})`).ringMaxRadius(3.2).ringPropagationSpeed(1.4).ringRepeatPeriod(1600);
   if (d.clickable) {
@@ -56,7 +57,7 @@ function riskLayer(g, d, state) {
     .htmlElement((p) => {
       const el = document.createElement("div");
       el.className = "kg-pin";
-      el.innerHTML = `<b>${p.name}</b><span>DHW ${p.dhw.toFixed(1)} · #${p.rank}</span>`;
+      el.innerHTML = `<b>${p.name}</b><span>#${p.rank} at risk</span>`;
       return el;
     });
   if (f && d.showFocus && state.focus !== d.focus) {
@@ -65,13 +66,37 @@ function riskLayer(g, d, state) {
   }
 }
 
-function treasureLayer(g, d) {
+function treasureLayer(g, d, state, root) {
   const top = Math.max(...d.points.map((p) => p.h)) || 1;
   // ~1,700 columns: merged into one mesh so the globe turns smoothly (one draw call instead of 1,700).
-  // Merged columns can't show a tooltip each; the list next to the globe gives the details.
   g.pointsData(d.points).pointLat("lat").pointLng("lon").pointsMerge(true).pointResolution(16).pointsTransitionDuration(0)
     .pointAltitude((p) => 0.003 + Math.pow(p.h / top, 1.8) * 0.3).pointRadius(1.15)
     .pointColor((p) => mix(WATER, Math.sqrt(p.h / top)));
+  // merged columns have no tooltips of their own, so we find the 5-degree cell under the mouse ourselves
+  const key = (lat, lon) => Math.floor(lat / 5) * 5 + "|" + Math.floor(lon / 5) * 5;
+  const cells = new Map(d.points.map((p) => [key(p.lat, p.lon), p]));
+  const box = document.createElement("div");
+  box.className = "kg-hover";
+  root.appendChild(box);
+  let raf = 0, dragging = false;
+  const hide = () => { box.style.opacity = "0"; };
+  root.addEventListener("pointerdown", () => { dragging = true; hide(); });
+  root.addEventListener("pointerup", () => { dragging = false; });
+  root.addEventListener("pointerleave", () => { dragging = false; hide(); });
+  root.addEventListener("pointermove", (e) => {
+    if (dragging || raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const r = root.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      const at = g.toGlobeCoords(x, y), p = at && cells.get(key(at.lat, at.lng));
+      if (!p) return hide();
+      box.innerHTML = tip(`+${fmt(p.h)} species not yet recorded`, [["Recorded so far", fmt(p.r)], ["Model expects", fmt(p.e)],
+        ["Sea temperature", p.t == null ? "no data" : p.t.toFixed(0) + " °C"]], p.lat, p.lon);
+      const left = Math.min(x + 18, r.width - 260), topY = Math.min(y + 18, r.height - 150);
+      box.style.transform = `translate(${left}px, ${topY}px)`;
+      box.style.opacity = "1";
+    });
+  });
 }
 
 function timeLayer(g, d, state, root) {
@@ -166,12 +191,14 @@ export default function (component) {
     root.addEventListener("pointerdown", state.stopSpin, { once: true });
     g.pointOfView({ lat: data.view?.lat ?? 15, lng: data.view?.lon ?? 40, altitude: data.view?.alt ?? 2.3 }, 0);
     state.g = g;
-    const legend = document.createElement("div");   // added after init: the globe empties its container
-    legend.className = "kg-legend";
-    legend.innerHTML = data.legend || "";
-    root.appendChild(legend);
+    if (data.legend) {                               // optional; added after init because the globe empties its container
+      const legend = document.createElement("div");
+      legend.className = "kg-legend";
+      legend.innerHTML = data.legend;
+      root.appendChild(legend);
+    }
     if (data.mode === "risk") riskLayer(g, data, state);
-    if (data.mode === "treasure") treasureLayer(g, data);
+    if (data.mode === "treasure") treasureLayer(g, data, state, root);
     if (data.mode === "time") timeLayer(g, data, state, root);
     const ro = new ResizeObserver(() => g.width(root.clientWidth));
     ro.observe(root);
