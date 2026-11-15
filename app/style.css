@@ -209,6 +209,19 @@ h1, h2, h3 { font-family: var(--serif) !important; font-weight: 400 !important; 
 .kz-tag.cr b { color: var(--heat-ink); }
 .kz-tag i { font-style: italic; }
 
+/* species list under each IUCN card: scrolls inside the card */
+.kz-list {
+  margin-top: 12px; padding: 16px; max-height: 300px; overflow-y: auto;
+  display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start;
+  scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, #000 88%, transparent);
+}
+.kz-list::-webkit-scrollbar { width: 6px; }
+.kz-list::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
+.kz-list .kz-tag { margin: 0; }
+.kz-empty { color: var(--muted); font-size: 15px; }
+
 /* site rows (Dive) */
 .kz-site { padding: 18px 8px; border-bottom: 1px solid var(--line); }
 .kz-site .top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }

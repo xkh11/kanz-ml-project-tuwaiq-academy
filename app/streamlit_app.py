@@ -440,16 +440,16 @@ with tab_act:
                 if clicked_site and clicked_site not in labels:
                     st.caption("That site wasn't checked for threatened species, so here is one that was")
             near = threatened[threatened["site_code"] == code]
-            near = near.sort_values("category", key=lambda s: s.map({"CR": 0, "EN": 1, "VU": 2}))
-            counts = near["category"].value_counts()
-            with col_counts:
-                html('<div class="kz-grid kz-g3">'
-                     + stat("Critically endangered", int(counts.get("CR", 0)), tone="heat")
-                     + stat("Endangered", int(counts.get("EN", 0)))
-                     + stat("Vulnerable", int(counts.get("VU", 0))) + "</div>")
-                html('<div style="margin-top:12px">' + "".join(
-                    f'<span class="kz-tag {c.lower()}"><b>{c}</b><i>{s}</i></span>'
-                    for s, c in zip(near["species"].head(12), near["category"].head(12))) + "</div>")
+            # one column per IUCN category: the count, then every species in it
+            groups = [("CR", "Critically endangered", "heat"), ("EN", "Endangered", ""), ("VU", "Vulnerable", "")]
+            cols = st.columns(3, gap="medium")
+            for col, (cat, title, tone) in zip(cols, groups):
+                names = sorted(near.loc[near["category"] == cat, "species"].dropna().tolist())
+                tags = ("".join(f'<span class="kz-tag {cat.lower()}"><i>{s}</i></span>' for s in names)
+                        or '<div class="kz-empty">None recorded near this site</div>')
+                with col:
+                    html(stat(title, len(names), f"IUCN {cat}", tone=tone)
+                         + f'<div class="kz-card kz-list">{tags}</div>')
 
         head("Who it is for", "One map, three kinds of user")
         users = [("Divers and travellers", "Free", "The healthiest reefs to dive today, and the rare animals you might meet there"),
